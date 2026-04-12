@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>منصة التقييم الذكي: بصيرة وبوصلة</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--mint:#2ecc8f;--mint-d:#1a8f63;--mint-l:#e8faf3;--sky:#5bb8f5;--lav:#9b7fe8;--peach:#ff8c69;--rose:#ff6b9d;--gold:#f5c842}
+body{font-family:'Segoe UI',Tahoma,'Arial Unicode MS',Arial,sans-serif;direction:rtl;background:#f7fdf9;color:#1a2e22;font-size:14px}
+
+/* ── SCREENS ── */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── LANDING ── */
+.landing{align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f6e56 0%,#1a8f63 30%,#5bb8f5 65%,#9b7fe8 100%);padding:20px}
+.landing-card{background:#fff;border-radius:24px;padding:36px 40px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(15,110,86,.3);text-align:center}
+.landing-logo{width:80px;height:80px;border-radius:18px;object-fit:cover;border:3px solid #e8faf3;margin-bottom:16px}
+.landing-title{font-size:20px;font-weight:800;color:#1a2e22;margin-bottom:4px}
+.landing-sub{font-size:13px;color:#6b9980;margin-bottom:28px}
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.role-card{border:2px solid #d4f0e4;border-radius:16px;padding:18px 12px;cursor:pointer;transition:all .2s;background:#fff;user-select:none}
+.role-card:hover{border-color:#2ecc8f;background:#f0fbf6;transform:translateY(-2px)}
+.role-card.sel{border-color:#2ecc8f;background:#e8faf3;box-shadow:0 0 0 3px rgba(46,204,143,.15)}
+.role-icon{font-size:32px;display:block;margin-bottom:8px}
+.role-lbl{font-size:13px;font-weight:700;color:#1a2e22}
+.role-desc{font-size:11px;color:#6b9980;margin-top:3px}
+.land-inp{width:100%;padding:11px 14px;border:1.5px solid #c8e8d8;border-radius:11px;background:#f7fdf9;color:#1a2e22;font-family:inherit;font-size:14px;margin-bottom:12px;text-align:right}
+.land-inp:focus{outline:none;border-color:#2ecc8f;background:#fff}
+.land-btn{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#2ecc8f,#5bb8f5);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.land-btn:hover{opacity:.9}
+.land-err{color:#c04060;font-size:12px;margin-top:6px;display:none}
+.step-hint{font-size:11px;color:#6b9980;margin-top:8px}
+
+/* ── HEADER (shared) ── */
+.header{background:linear-gradient(135deg,#0f6e56 0%,#2ecc8f 38%,#5bb8f5 72%,#9b7fe8 100%);position:sticky;top:0;z-index:100;box-shadow:0 3px 20px rgba(15,110,86,.3)}
+.hdr-inner{display:flex;align-items:center;gap:12px;padding:10px 18px}
+.hdr-logo{width:54px;height:54px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.5);flex-shrink:0;background:rgba(255,255,255,.15)}
+.hdr-txt{flex:1;min-width:0}
+.hdr-txt h1{font-size:16px;font-weight:800;color:#fff;line-height:1.2}
+.hdr-txt .hdr-sub{font-size:12px;color:rgba(255,255,255,.85);font-weight:600;margin-top:1px}
+.hdr-txt .hdr-sup{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
+.hdr-acts{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center}
+.btn-hdr{padding:7px 13px;border-radius:18px;border:2px solid rgba(255,255,255,.6);background:rgba(255,255,255,.18);color:#fff;cursor:pointer;font-size:12px;font-family:inherit;font-weight:700;transition:all .15s;white-space:nowrap}
+.btn-hdr:hover{background:rgba(255,255,255,.32)}
+.btn-hdr.solid{background:#fff;color:#1a8f63;border-color:#fff}
+.btn-hdr.solid:hover{background:#e8faf3}
+.btn-hdr.xl{background:#1D6F42;border-color:#1D6F42}
+.btn-hdr.xl:hover{background:#155330}
+.btn-hdr.gold{background:var(--gold);border-color:var(--gold);color:#5a3e00}
+.btn-hdr.gold:hover{background:#e0b430}
+.btn-hdr:disabled{opacity:.5;cursor:not-allowed}
+.lang-sw{display:flex;background:rgba(255,255,255,.15);border-radius:16px;padding:2px;border:1.5px solid rgba(255,255,255,.3)}
+.lang-btn{padding:4px 10px;border-radius:12px;border:none;background:transparent;color:rgba(255,255,255,.8);cursor:pointer;font-size:11px;font-weight:800;font-family:inherit;transition:all .2s}
+.lang-btn.active{background:#fff;color:#1a8f63}
+.mob-strip{display:none;gap:5px;padding:6px 12px;background:rgba(0,0,0,.1);flex-wrap:wrap}
+.btn-mob{padding:5px 10px;border-radius:12px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.18);color:#fff;cursor:pointer;font-size:11px;font-family:inherit;font-weight:700}
+.btn-mob.solid{background:#fff;color:#1a8f63}
+.btn-mob.xl{background:#1D6F42;border-color:#1D6F42}
+
+/* ── MAIN LAYOUT ── */
+.main{display:flex;flex:1;min-height:0}
+.sidebar{width:210px;flex-shrink:0;background:#fff;border-left:1px solid #d4f0e4;padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+.sb-head{font-size:10px;color:#7bb89a;font-weight:800;padding:4px 10px;letter-spacing:.8px;margin-bottom:4px}
+.nav-item{padding:10px 13px;border-radius:12px;cursor:pointer;font-size:13px;color:#4a7a60;transition:all .15s;display:flex;align-items:center;gap:9px;font-weight:500;user-select:none}
+.nav-item:hover{background:#e8faf3;color:#1a8f63}
+.nav-item.active{background:linear-gradient(135deg,#e8faf3,#eaf6ff);color:#1a8f63;font-weight:700;border:1px solid #b8e8d4}
+.nav-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.d1{background:#2ecc8f}.d2{background:#5bb8f5}.d3{background:#9b7fe8}
+.content{flex:1;overflow-y:auto;padding:18px;background:#f7fdf9}
+.section{display:none}.section.active{display:block}
+.mobile-nav{display:none}
+
+/* ── CARDS / FORMS ── */
+.card{background:#fff;border:1px solid #d4f0e4;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 5px rgba(46,204,143,.06)}
+.card-title{font-size:13px;font-weight:700;margin-bottom:12px;padding-bottom:9px;border-bottom:1px dashed #d4f0e4;color:#1a8f63;display:flex;align-items:center;gap:7px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:11px;color:#6b9980;font-weight:700;letter-spacing:.3px}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;color:#1a2e22;font-family:inherit;font-size:13px;transition:border-color .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2ecc8f;background:#fff}
+.skills-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;min-height:24px}
+.skill-tag{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:18px;font-size:12px;font-weight:600}
+.skill-tag:nth-child(4n+1){background:#e8faf3;color:#1a8f63;border:1px solid #b8e8d4}
+.skill-tag:nth-child(4n+2){background:#eaf6ff;color:#1a6fa5;border:1px solid #b8d8f4}
+.skill-tag:nth-child(4n+3){background:#f3efff;color:#6344b8;border:1px solid #c8b8f0}
+.skill-tag:nth-child(4n+4){background:#fff0eb;color:#c05a30;border:1px solid #f5c4b3}
+.skill-tag .rm{cursor:pointer;font-size:14px;opacity:.6;line-height:1}.skill-tag .rm:hover{opacity:1}
+.skill-row{display:flex;gap:8px;align-items:flex-end}
+.btn{padding:8px 16px;border-radius:10px;border:1.5px solid #c8e8d8;background:#fff;color:#1a8f63;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .15s}
+.btn:hover{background:#e8faf3;border-color:#2ecc8f}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-mint{background:#2ecc8f;color:#fff;border-color:#2ecc8f}
+.btn-mint:hover:not(:disabled){background:#1a8f63}
+.btn-rose{background:#ff6b9d;color:#fff;border-color:#ff6b9d}.btn-rose:hover{background:#d04070}
+.btn-sky{background:#5bb8f5;color:#fff;border-color:#5bb8f5}.btn-sky:hover{background:#2a90d0}
+.btn-gold{background:var(--gold);color:#5a3e00;border-color:var(--gold)}.btn-gold:hover{background:#e0b430}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:7px}
+.q-list{display:flex;flex-direction:column;gap:7px}
+.q-item{display:flex;gap:7px;align-items:center;background:#f7fdf9;padding:8px 11px;border-radius:11px;border:1px solid #d4f0e4;flex-wrap:wrap}
+.q-num{font-size:11px;color:#6b9980;font-weight:700;min-width:22px;text-align:center;background:#e8faf3;padding:3px 5px;border-radius:5px;flex-shrink:0}
+.q-inp{flex:1;min-width:120px;padding:5px 8px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;color:#1a2e22;font-family:inherit;font-size:12px}
+.q-inp:focus{outline:none;border-color:#2ecc8f}
+.q-sel{padding:5px 7px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;color:#1a2e22;font-family:inherit;font-size:12px}
+.q-mark{width:56px;padding:5px 7px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;color:#1a2e22;font-family:inherit;font-size:12px;text-align:center}
+.cls-chip{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-radius:11px;margin-bottom:7px;border:1px solid}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:#e8faf3;color:#1a8f63;border:1px solid #b8e8d4}
+.motivate{background:linear-gradient(135deg,#e8faf3,#eaf6ff 50%,#f3efff);border:1px solid #c8e8d8;border-radius:13px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;color:#2a6a4a;font-weight:500}
+.paste-hint{font-size:12px;color:#6b9980;background:#f7fdf9;border:1px dashed #c8e8d8;border-radius:9px;padding:7px 13px;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:6px 15px;cursor:pointer;font-size:13px;color:#6b9980;border-radius:18px;border:1.5px solid #d4f0e4;background:#fff;font-weight:500;transition:all .15s;user-select:none}
+.tab.active{color:#fff;border-color:transparent;font-weight:700}
+.tab:hover:not(.active){background:#e8faf3;border-color:#2ecc8f;color:#1a8f63}
+
+/* ── GRADES TABLE ── */
+.grades-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.grades-table th{background:#f7fdf9;padding:8px 9px;text-align:center;font-weight:700;font-size:11px;color:#6b9980;border-bottom:1.5px solid #d4f0e4}
+.grades-table th:first-child{text-align:right}
+.grades-table td{padding:6px 8px;border-bottom:1px solid #edf8f3;text-align:center}
+.grades-table td:first-child{text-align:right;font-weight:600;padding-right:11px}
+.grades-table tr:last-child td{border-bottom:none}
+.grades-table tr:hover td{background:#f0fbf6}
+.g-inp{width:60px;padding:4px 6px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;color:#1a2e22;font-family:inherit;font-size:13px;text-align:center}
+.g-inp:focus{outline:none;border-color:#2ecc8f}
+.g-inp.over{border-color:#ff6b9d;background:#fff0f5}
+
+/* ── ANALYSIS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:14px}
+.stat-card{border-radius:13px;padding:13px;text-align:center}
+.sc1{background:#e8faf3;border:1px solid #b8e8d4}.sc1 .sl{color:#1a8f63}.sc1 .sv{color:#2ecc8f}
+.sc2{background:#eaf6ff;border:1px solid #b8d8f4}.sc2 .sl{color:#1a6fa5}.sc2 .sv{color:#5bb8f5}
+.sc3{background:#f3efff;border:1px solid #c8b8f0}.sc3 .sl{color:#6344b8}.sc3 .sv{color:#9b7fe8}
+.sc4{background:#fff0eb;border:1px solid #f5c4b3}.sc4 .sl{color:#c05a30}.sc4 .sv{color:#ff8c69}
+.sl{font-size:11px;font-weight:700;margin-bottom:5px}
+.sv{font-size:22px;font-weight:700}
+.bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.bar-lbl{font-size:12px;width:110px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:16px;background:#f0fbf6;border-radius:8px;overflow:hidden;border:1px solid #d4f0e4}
+.bar-fill{height:100%;border-radius:8px;transition:width .4s}
+.bar-pct{font-size:12px;font-weight:700;width:36px;text-align:right}
+.chart-leg{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;justify-content:center}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#4a7a60;font-weight:600}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.empty{text-align:center;padding:40px;color:#6b9980}
+.ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ins-card{border-radius:13px;padding:14px 16px}
+.ins-card.blue{background:#eaf6ff;border:1px solid #b8d8f4}
+.ins-card.amber{background:#fffbea;border:1px solid #f5d87a}
+.ins-title{font-size:13px;font-weight:800;margin-bottom:11px}
+.ins-card.blue .ins-title{color:#1a6fa5}
+.ins-card.amber .ins-title{color:#7a5e00}
+.ins-item{display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #d4f0e4}
+.ins-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.ins-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.ins-text{font-size:12px;color:#1a2e22;line-height:1.6}
+.ins-card.blue .ins-text b{color:#1a6fa5}
+.ins-card.amber .ins-text b{color:#7a5e00}
+
+/* ── INPUT METHOD CHOICE ── */
+.method-choice{display:flex;gap:12px;margin-bottom:4px}
+.mc-opt{flex:1;border:2px solid #d4f0e4;border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .2s;background:#fff;text-align:center;user-select:none}
+.mc-opt:hover{border-color:#2ecc8f;background:#f0fbf6;transform:translateY(-2px)}
+.mc-opt.sel{border-color:#2ecc8f;background:#e8faf3;box-shadow:0 0 0 3px rgba(46,204,143,.15)}
+.mc-opt .mc-ico{font-size:28px;margin-bottom:7px}
+.mc-opt .mc-ttl{font-size:13px;font-weight:700;color:#1a2e22;margin-bottom:3px}
+.mc-opt .mc-dsc{font-size:11px;color:#6b9980}
+/* upload zone */
+.upload-zone{border:2px dashed #b8e8d4;border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:#f7fdf9;margin-bottom:12px}
+.upload-zone:hover,.upload-zone.drag{border-color:#2ecc8f;background:#e8faf3}
+.upload-zone input{display:none}
+.upload-icon{font-size:36px;margin-bottom:8px}
+.upload-lbl{font-size:13px;font-weight:700;color:#1a8f63;margin-bottom:4px}
+.upload-sub{font-size:11px;color:#6b9980}
+.upload-file-name{font-size:12px;color:#1a8f63;font-weight:700;margin-top:8px;background:#e8faf3;padding:5px 12px;border-radius:8px;display:inline-block}
+/* ai table */
+.ai-table-wrap{overflow-x:auto;margin-bottom:10px}
+.ai-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.ai-table th{background:#e8faf3;padding:9px 10px;text-align:right;font-weight:700;font-size:11px;color:#1a8f63;border-bottom:2px solid #b8e8d4}
+.ai-table td{padding:7px 9px;border-bottom:1px solid #edf8f3;vertical-align:middle}
+.ai-table tr:last-child td{border-bottom:none}
+.ai-table tr:hover td{background:#f0fbf6}
+.ai-inp{width:100%;padding:5px 8px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;color:#1a2e22;font-family:inherit;font-size:12px}
+.ai-inp:focus{outline:none;border-color:#2ecc8f}
+.ai-inp.num{width:70px;text-align:center}
+.ai-loading{display:flex;align-items:center;gap:10px;padding:18px;background:#eaf6ff;border-radius:11px;font-size:13px;color:#1a6fa5;font-weight:600}
+.section-hidden{display:none}
+/* ── SAVE BANNER ── */
+.save-banner{background:#e8faf3;border:1px solid #b8e8d4;border-radius:12px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.save-info{font-size:12px;color:#1a8f63;font-weight:600;display:flex;align-items:center;gap:6px}
+.save-actions{display:flex;gap:7px}
+.saved-sessions{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.saved-item{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:#f7fdf9;border:1px solid #d4f0e4;border-radius:10px;gap:8px}
+.saved-item-info{font-size:13px;font-weight:600;color:#1a2e22}
+.saved-item-meta{font-size:11px;color:#6b9980;margin-top:2px}
+.saved-item-acts{display:flex;gap:6px;flex-shrink:0}
+
+/* ── ADMIN PANEL ── */
+.admin-screen{background:#f7fdf9}
+.admin-panel{display:flex;flex:1}
+.admin-sidebar{width:260px;flex-shrink:0;background:#fff;border-left:1px solid #d4f0e4;padding:16px 12px}
+.admin-content{flex:1;overflow-y:auto;padding:18px}
+.admin-filter-card{background:#fff;border:1px solid #d4f0e4;border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.admin-filter-title{font-size:13px;font-weight:700;color:#9b7fe8;margin-bottom:12px;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px dashed #e8e0f8}
+.filter-sel{width:100%;padding:9px 12px;border:1.5px solid #c8c0f0;border-radius:10px;background:#f7f5ff;color:#1a2e22;font-family:inherit;font-size:13px;margin-bottom:10px}
+.filter-sel:focus{outline:none;border-color:#9b7fe8}
+.filter-multi{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
+.filter-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background .15s}
+.filter-check:hover{background:#f3efff}
+.filter-check input[type=checkbox]{accent-color:#9b7fe8;width:15px;height:15px;cursor:pointer}
+.filter-check label{font-size:13px;color:#1a2e22;cursor:pointer;font-weight:500}
+.admin-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-bottom:14px}
+.admin-stat{border-radius:12px;padding:13px;text-align:center;background:#f3efff;border:1px solid #c8b8f0}
+.admin-stat .lbl{font-size:11px;color:#6344b8;font-weight:700;margin-bottom:5px}
+.admin-stat .val{font-size:20px;font-weight:700;color:#9b7fe8}
+.rec-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;margin-top:6px}
+.rec-table th{background:#f7f5ff;padding:8px 10px;text-align:right;font-weight:700;font-size:11px;color:#6344b8;border-bottom:1.5px solid #c8b8f0}
+.rec-table td{padding:7px 10px;border-bottom:1px solid #eeeaf8}
+.rec-table tr:last-child td{border-bottom:none}
+.rec-table tr:hover td{background:#f3efff}
+.pct-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.pct-hi{background:#e8faf3;color:#1a8f63}.pct-md{background:#fffbea;color:#7a5e00}.pct-lo{background:#fff0f5;color:#c04060}
+.empty-admin{text-align:center;padding:40px;color:#9b7fe8}
+.compare-chart-wrap{overflow-x:auto}
+
+/* ── SEND STATUS ── */
+.send-status{display:flex;align-items:center;gap:8px;padding:10px 15px;border-radius:11px;font-size:13px;font-weight:600;margin-bottom:11px}
+.send-status.sending{background:#eaf6ff;color:#1a6fa5;border:1px solid #b8d8f4}
+.send-status.ok{background:#e8faf3;color:#1a8f63;border:1px solid #b8e8d4}
+.send-status.err{background:#fff0f5;color:#c04060;border:1px solid #f5b8d4}
+.spinner{width:16px;height:16px;border:2.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,46,34,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:22px;width:460px;max-width:100%;border:1px solid #d4f0e4;box-shadow:0 8px 32px rgba(46,204,143,.18)}
+.modal-hdr{font-size:15px;font-weight:700;color:#1a8f63;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-x{cursor:pointer;color:#6b9980;font-size:22px;line-height:1}.modal-x:hover{color:#ff6b9d}
+.send-modal{background:#fff;border-radius:22px;padding:24px;width:480px;max-width:96vw;border:1px solid #d4f0e4;box-shadow:0 12px 40px rgba(46,204,143,.2)}
+.send-hdr{font-size:16px;font-weight:800;color:#1a2e22;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
+.send-sub{font-size:13px;color:#6b9980;margin-bottom:18px}
+.method-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:20px}
+.mc{border:2px solid #d4f0e4;border-radius:14px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .18s;background:#fff;user-select:none}
+.mc:hover{border-color:#2ecc8f;background:#f0fbf6;transform:translateY(-2px)}
+.mc.sel{border-color:#2ecc8f;background:#e8faf3}
+.mc.wa.sel{border-color:#25D366;background:#e8fdf0}
+.mc-icon{font-size:32px;display:block;margin-bottom:7px}
+.mc-lbl{font-size:13px;font-weight:700;color:#1a2e22}
+.mc-desc{font-size:11px;color:#6b9980;margin-top:2px}
+.step-dots{display:flex;gap:5px;justify-content:center;margin-bottom:16px}
+.sdot{width:8px;height:8px;border-radius:50%;background:#d4f0e4;transition:background .3s}
+.sdot.active{background:#2ecc8f}
+.c-field{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.c-field label{font-size:11px;color:#6b9980;font-weight:700}
+.c-field input{padding:10px 13px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;color:#1a2e22;font-family:inherit;font-size:14px}
+.c-field input:focus{outline:none;border-color:#2ecc8f;background:#fff}
+.info-box{border-radius:9px;padding:9px 13px;font-size:12px;margin-bottom:14px;display:flex;gap:7px}
+.info-box.em{background:#e8faf3;border:1px solid #b8e8d4;color:#1a8f63}
+.info-box.wa{background:#e8fdf0;border:1px solid #a8e8c0;color:#1a6f40}
+.send-acts{display:flex;gap:9px;justify-content:flex-end}
+.prog-wrap{background:#f0fbf6;border-radius:7px;height:7px;overflow:hidden;margin:9px 0}
+.prog-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,#2ecc8f,#5bb8f5);transition:width .4s}
+
+/* ── TOAST ── */
+#toastWrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none}
+.toast{background:#1a2e22;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1}
+.toast.s{background:#2ecc8f}.toast.w{background:#ff8c69}.toast.e{background:#ff6b9d}
+
+/* ── PRINT ── */
+#printArea{display:none}
+@media print{
+  body>*{visibility:hidden}#printArea,#printArea *{visibility:visible}
+  #printArea{display:block;position:absolute;inset:0;background:#fff;font-family:'Segoe UI',Tahoma,'Arial Unicode MS',Arial,sans-serif;direction:rtl;font-size:11pt;color:#111}
+  @page{size:A4 portrait;margin:12mm 10mm}
+  .pr-pg{page-break-after:always}.pr-pg:last-child{page-break-after:avoid}
+  .pr-hdr{background:#2ecc8f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:9px;padding:11px 15px;display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .pr-logo{width:52px;height:52px;border-radius:9px;object-fit:cover;border:2px solid rgba(255,255,255,.5);flex-shrink:0}
+  .pr-htxt h1{font-size:14pt;font-weight:800;color:#fff;margin:0 0 2px}
+  .pr-htxt p{font-size:10pt;color:rgba(255,255,255,.9);margin:1px 0;font-weight:600}
+  .pr-coord{margin-right:auto;background:rgba(255,255,255,.22);border-radius:7px;padding:5px 11px;font-size:9.5pt;font-weight:800;color:#fff;border:1.5px solid rgba(255,255,255,.5);white-space:nowrap;text-align:center;align-self:center}
+  .pr-meta{display:flex;gap:12px;font-size:9pt;background:#e8faf3!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:7px;padding:6px 12px;margin-bottom:11px;flex-wrap:wrap}
+  .pr-meta span{color:#1a8f63;font-weight:600}.pr-meta b{color:#1a2e22}
+  .pr-sec{font-size:11pt;font-weight:800;color:#1a8f63;border-bottom:2px solid #2ecc8f;padding-bottom:3px;margin:12px 0 7px}
+  .pr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+  .pr-stat{background:#e8faf3!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:7px;padding:7px;text-align:center;border:1px solid #b8e8d4}
+  .pr-stat .lbl{font-size:8pt;color:#1a8f63;font-weight:700;margin-bottom:2px}.pr-stat .val{font-size:14pt;font-weight:800;color:#1a8f63}
+  .pr-tbl{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:9px}
+  .pr-tbl th{background:#2ecc8f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#fff;padding:5px 7px;text-align:center;font-weight:700;border:1px solid #1a8f63}
+  .pr-tbl th:first-child{text-align:right}
+  .pr-tbl td{padding:4px 7px;border:1px solid #d4f0e4;text-align:center}
+  .pr-tbl td:first-child{text-align:right;font-weight:600}
+  .pr-tbl tr:nth-child(even) td{background:#f0fbf6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pr-tbl .ph{color:#1a8f63;font-weight:700}.pr-tbl .pm{color:#7a5e00;font-weight:700}.pr-tbl .pl{color:#c04030;font-weight:700}
+  .pr-sk{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:9pt}
+  .pr-sk-n{width:110px;font-weight:600}
+  .pr-sk-t{flex:1;height:9px;background:#e8faf3;border-radius:4px;overflow:hidden;border:1px solid #b8e8d4}
+  .pr-sk-f{height:100%;border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pr-sk-p{width:34px;font-weight:700;text-align:right}
+  .pr-ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:5px}
+  .pr-ins-b{border-radius:7px;padding:9px 12px}
+  .pr-ins-b.b{background:#eaf6ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border:1px solid #b8d8f4}
+  .pr-ins-b.a{background:#fffbea!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border:1px solid #f5d87a}
+  .pr-ins-t{font-size:9.5pt;font-weight:800;margin-bottom:6px}
+  .pr-ins-b.b .pr-ins-t{color:#1a6fa5}.pr-ins-b.a .pr-ins-t{color:#7a5e00}
+  .pr-ins-i{font-size:8pt;color:#1a2e22;margin-bottom:4px;line-height:1.5;padding-right:10px;position:relative}
+  .pr-ins-i::before{content:'•';position:absolute;right:0}
+  .pr-ins-b.b .pr-ins-i::before{color:#5bb8f5}.pr-ins-b.a .pr-ins-i::before{color:#f5c842}
+  .pr-foot{font-size:8pt;color:#6b9980;text-align:center;margin-top:12px;padding-top:7px;border-top:1px solid #d4f0e4}
+}
+
+/* ── DARK MODE ── */
+body.dark{background:#0f1a14;color:#d4f0e4}
+body.dark .card{background:#162419;border-color:#2a4a35}
+body.dark .sidebar{background:#162419;border-color:#2a4a35}
+body.dark .content{background:#0f1a14}
+body.dark .grades-table th{background:#1a2e22;color:#7bb89a}
+body.dark .grades-table td{border-color:#2a4a35}
+body.dark .grades-table tr:hover td{background:#1e3328}
+body.dark .g-inp{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+body.dark .g-inp:focus{border-color:#2ecc8f;background:#1e3328}
+body.dark .g-inp.over{background:#3a1020;border-color:#ff6b9d}
+body.dark .nav-item{color:#7bb89a}
+body.dark .nav-item:hover{background:#1e3328}
+body.dark .nav-item.active{background:linear-gradient(135deg,#1e3328,#1a2a38);border-color:#2a4a35}
+body.dark .q-item{background:#1a2e22;border-color:#2a4a35}
+body.dark .q-inp,.dark .q-sel,.dark .q-mark{background:#162419;border-color:#2a4a35;color:#d4f0e4}
+body.dark .form-group input,.dark .form-group select,.dark .form-group textarea{background:#162419;border-color:#2a4a35;color:#d4f0e4}
+body.dark .save-banner{background:#1a2e22;border-color:#2a4a35}
+body.dark .motivate{background:linear-gradient(135deg,#1a2e22,#1a2a38,#1e1a30);border-color:#2a4a35;color:#7bb89a}
+body.dark .paste-hint{background:#1a2e22;border-color:#2a4a35;color:#6b9980}
+body.dark .tab{background:#1a2e22;border-color:#2a4a35;color:#7bb89a}
+body.dark .modal{background:#162419;border-color:#2a4a35}
+body.dark .modal-hdr{color:#2ecc8f}
+body.dark .stat-card.sc1{background:#1a2e22;border-color:#2a4a35}
+body.dark .stat-card.sc2{background:#1a2038;border-color:#2a3050}
+body.dark .stat-card.sc3{background:#1e1a30;border-color:#3a2a50}
+body.dark .stat-card.sc4{background:#2a1a10;border-color:#4a2a20}
+body.dark .ins-card.blue{background:#1a2038;border-color:#2a3050}
+body.dark .ins-card.amber{background:#2a2210;border-color:#4a3a10}
+body.dark .card-title{color:#2ecc8f;border-color:#2a4a35}
+body.dark .upload-zone{background:#162419;border-color:#2a4a35}
+body.dark .ai-table th{background:#1e3328;color:#2ecc8f}
+body.dark .ai-table td{border-color:#2a4a35}
+body.dark .ai-inp{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+body.dark .mc-opt{background:#162419;border-color:#2a4a35}
+body.dark .mc-opt.sel{background:#1e3328}
+body.dark .mc-opt .mc-ttl{color:#d4f0e4}
+body.dark .landing-card{background:#162419;color:#d4f0e4}
+body.dark .land-inp{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+body.dark .role-card{background:#1a2e22;border-color:#2a4a35}
+body.dark .role-lbl{color:#d4f0e4}
+/* dark toggle button */
+.dark-toggle{position:fixed;bottom:72px;left:14px;z-index:160;width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(26,46,34,.8);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:all .2s;backdrop-filter:blur(6px)}
+.dark-toggle:hover{transform:scale(1.1);background:rgba(46,204,143,.7)}
+
+/* ── FULLSCREEN GRADES ── */
+.grades-fullscreen .content{position:fixed;inset:0;z-index:180;padding:12px;background:#f7fdf9;overflow-y:auto}
+body.dark.grades-fullscreen .content{background:#0f1a14}
+.grades-fullscreen .sidebar,.grades-fullscreen .header,.grades-fullscreen .mobile-nav,.grades-fullscreen .mob-strip{display:none!important}
+.grades-fullscreen .section:not(#section-grades){display:none!important}
+.fs-btn{position:sticky;top:0;z-index:10;margin-bottom:8px;display:flex;justify-content:flex-end;gap:7px}
+
+/* ── PASSING THRESHOLD ── */
+.threshold-row{display:flex;align-items:center;gap:10px;background:#fffbea;border:1px solid #f5d87a;border-radius:10px;padding:8px 13px;margin-bottom:12px;flex-wrap:wrap}
+.threshold-row label{font-size:12px;font-weight:700;color:#7a5e00}
+.threshold-inp{width:60px;padding:5px 8px;border:1.5px solid #f5d87a;border-radius:8px;background:#fff;color:#7a5e00;font-family:inherit;font-size:13px;font-weight:700;text-align:center}
+.threshold-inp:focus{outline:none;border-color:#f5c842}
+body.dark .threshold-row{background:#2a2210;border-color:#4a3a10}
+body.dark .threshold-inp{background:#1a2e22;color:#f5c842;border-color:#4a3a10}
+
+/* ── STUDENT REPORT ── */
+.st-rep-modal{background:#fff;border-radius:20px;padding:22px;width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;border:1px solid #d4f0e4;box-shadow:0 12px 40px rgba(46,204,143,.2)}
+body.dark .st-rep-modal{background:#162419;border-color:#2a4a35}
+.st-rep-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.st-rep-name{font-size:16px;font-weight:800;color:#1a8f63}
+body.dark .st-rep-name{color:#2ecc8f}
+.st-skill-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.st-skill-lbl{font-size:12px;font-weight:600;width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-skill-track{flex:1;height:14px;background:#e8faf3;border-radius:7px;overflow:hidden;border:1px solid #b8e8d4}
+body.dark .st-skill-track{background:#1a2e22;border-color:#2a4a35}
+.st-skill-fill{height:100%;border-radius:7px;transition:width .5s}
+.st-skill-pct{font-size:12px;font-weight:700;width:36px;text-align:left}
+
+/* ── COMPARISON CHART ── */
+.compare-sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.compare-sel label{font-size:12px;font-weight:700;color:#6b9980}
+.compare-sel select{padding:6px 10px;border:1.5px solid #c8e8d8;border-radius:9px;background:#fff;color:#1a2e22;font-family:inherit;font-size:12px}
+body.dark .compare-sel select{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+
+/* ── LIVE TOTAL COLUMN ── */
+.g-total{font-size:12px;font-weight:800;padding:4px 7px;border-radius:7px;text-align:center;min-width:52px;transition:background .3s}
+.g-total.ph{background:#e8faf3;color:#1a8f63}
+.g-total.pm{background:#fffbea;color:#7a5e00}
+.g-total.pl{background:#fff0f5;color:#c04060}
+body.dark .g-total.ph{background:#1a2e22;color:#2ecc8f}
+body.dark .g-total.pm{background:#2a2210;color:#f5c842}
+body.dark .g-total.pl{background:#3a1020;color:#ff6b9d}
+
+/* ── EXCEL IMPORT ── */
+.xl-import-wrap{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.xl-import-wrap input[type=file]{display:none}
+
+@media(max-width:768px){
+  .hdr-acts{display:none}.mob-strip{display:flex}
+  .sidebar{display:none}.main{flex-direction:column}.content{padding:13px;padding-bottom:78px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;right:0;left:0;z-index:150;background:#fff;border-top:1.5px solid #d4f0e4;box-shadow:0 -3px 14px rgba(46,204,143,.12)}
+  .mn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px 9px;cursor:pointer;font-size:10px;color:#6b9980;font-weight:600;transition:all .15s;gap:2px;user-select:none;border-top:3px solid transparent}
+  .mn-item.active{color:#1a8f63;border-top-color:#2ecc8f}
+  .mn-icon{font-size:19px;line-height:1}
+  .form-row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .ins-grid{grid-template-columns:1fr}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .send-modal,.modal{width:100%;max-width:100%;border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto}
+  .grades-table{font-size:11px}
+  .grades-table th,.grades-table td{padding:4px 5px}
+  .g-inp{width:48px;font-size:12px}
+  .admin-panel{flex-direction:column}
+  .admin-sidebar{width:100%;border-left:none;border-bottom:1px solid #d4f0e4}
+  .admin-stat-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:400px){.stats-grid{grid-template-columns:1fr 1fr}.sv{font-size:20px}.method-cards{grid-template-columns:1fr}}
+
+/* ── SUBJECT / LANGUAGE PICKER ── */
+.subject-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px}
+.subj-card{border:2px solid #d4f0e4;border-radius:13px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .2s;background:#fff;user-select:none}
+.subj-card:hover{border-color:#2ecc8f;background:#f0fbf6;transform:translateY(-2px)}
+.subj-card.sel{border-color:#2ecc8f;background:#e8faf3;box-shadow:0 0 0 3px rgba(46,204,143,.15)}
+.subj-card .sj-ico{font-size:24px;margin-bottom:5px}
+.subj-card .sj-lbl{font-size:12px;font-weight:700;color:#1a2e22}
+.subj-card .sj-lang{font-size:10px;color:#6b9980;margin-top:2px}
+body.dark .subj-card{background:#162419;border-color:#2a4a35}
+body.dark .subj-card.sel{background:#1e3328}
+body.dark .subj-card .sj-lbl{color:#d4f0e4}
+
+/* ── BLOOM TAXONOMY ── */
+.bloom-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.bloom-1{background:#fff0eb;color:#c05a30;border:1px solid #f5c4b3}  /* تذكر */
+.bloom-2{background:#fffbea;color:#7a5e00;border:1px solid #f5d87a}  /* فهم */
+.bloom-3{background:#e8faf3;color:#1a8f63;border:1px solid #b8e8d4}  /* تطبيق */
+.bloom-4{background:#eaf6ff;color:#1a6fa5;border:1px solid #b8d8f4}  /* تحليل */
+.bloom-5{background:#f3efff;color:#6344b8;border:1px solid #c8b8f0}  /* تقييم */
+.bloom-6{background:#fff0f8;color:#9b2060;border:1px solid #f0b8d8}  /* تركيب */
+body.dark .bloom-1{background:#3a1a10;color:#ff9060}
+body.dark .bloom-2{background:#2a2210;color:#f5c842}
+body.dark .bloom-3{background:#1a2e22;color:#2ecc8f}
+body.dark .bloom-4{background:#1a2038;color:#5bb8f5}
+body.dark .bloom-5{background:#1e1a30;color:#9b7fe8}
+body.dark .bloom-6{background:#2a1020;color:#ff6b9d}
+
+.bloom-dist{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.bloom-dist-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.bloom-bar-wrap{background:#f7fdf9;border:1px solid #d4f0e4;border-radius:10px;padding:10px 14px;margin-bottom:10px}
+body.dark .bloom-bar-wrap{background:#1a2e22;border-color:#2a4a35}
+.bloom-warn{background:#fffbea;border:1px solid #f5d87a;border-radius:9px;padding:9px 13px;font-size:12px;color:#7a5e00;margin-top:8px;display:flex;gap:7px;align-items:flex-start}
+body.dark .bloom-warn{background:#2a2210;border-color:#4a3a10;color:#f5c842}
+
+/* ── AI TABLE BLOOM COL ── */
+.bloom-sel{padding:4px 6px;border:1.5px solid #c8e8d8;border-radius:7px;background:#fff;font-family:inherit;font-size:11px;max-width:130px}
+.bloom-sel:focus{outline:none;border-color:#2ecc8f}
+body.dark .bloom-sel{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+
+@media(max-width:768px){
+  .subject-picker{grid-template-columns:repeat(2,1fr)}
+  .bloom-dist{gap:4px}
+}
+@media(max-width:400px){
+  .subject-picker{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── PDF OPTIONS MODAL ── */
+.pdf-modal{background:#fff;border-radius:22px;padding:24px;width:500px;max-width:96vw;max-height:92vh;overflow-y:auto;border:1px solid #d4f0e4;box-shadow:0 16px 50px rgba(46,204,143,.22)}
+body.dark .pdf-modal{background:#162419;border-color:#2a4a35}
+.pdf-modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pdf-modal-title{font-size:16px;font-weight:800;color:#1a2e22}
+body.dark .pdf-modal-title{color:#d4f0e4}
+.pdf-modal-sub{font-size:12px;color:#6b9980;margin-bottom:18px}
+.pdf-sections-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.pdf-sec-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid #d4f0e4;border-radius:13px;cursor:pointer;transition:all .18s;user-select:none;background:#fff}
+.pdf-sec-item:hover{border-color:#2ecc8f;background:#f0fbf6}
+.pdf-sec-item.checked{border-color:#2ecc8f;background:#e8faf3}
+body.dark .pdf-sec-item{background:#1a2e22;border-color:#2a4a35;color:#d4f0e4}
+body.dark .pdf-sec-item:hover{background:#1e3328}
+body.dark .pdf-sec-item.checked{background:#1e3328;border-color:#2ecc8f}
+.pdf-sec-ico{font-size:20px;flex-shrink:0;width:28px;text-align:center}
+.pdf-sec-info{flex:1}
+.pdf-sec-lbl{font-size:13px;font-weight:700;color:#1a2e22}
+body.dark .pdf-sec-lbl{color:#d4f0e4}
+.pdf-sec-desc{font-size:11px;color:#6b9980;margin-top:2px}
+.pdf-sec-chk{width:20px;height:20px;border-radius:6px;border:2px solid #c8e8d8;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.pdf-sec-item.checked .pdf-sec-chk{background:#2ecc8f;border-color:#2ecc8f}
+.pdf-sec-item.checked .pdf-sec-chk::after{content:'✓';color:#fff;font-size:12px;font-weight:800}
+body.dark .pdf-sec-chk{background:#1a2e22;border-color:#2a4a35}
+.pdf-ai-note{background:linear-gradient(135deg,#e8faf3,#eaf6ff);border:1px solid #b8e8d4;border-radius:10px;padding:10px 14px;font-size:11px;color:#1a6fa5;display:flex;gap:8px;align-items:flex-start;margin-bottom:16px}
+body.dark .pdf-ai-note{background:linear-gradient(135deg,#1a2e22,#1a2038);border-color:#2a4a35;color:#5bb8f5}
+.pdf-modal-acts{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:500px){
+  .pdf-modal{border-radius:20px 20px 0 0}
+  .pdf-sec-item{padding:9px 11px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+  SCREEN 0: LANDING
+════════════════════════════════════ -->
+<div class="screen active" id="screenLanding" style="flex-direction:row">
+  <div class="landing">
+    <div class="landing-card">
+      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="landing-logo" onerror="this.style.display='none'"/>
+      <div class="landing-title">منصة التقييم الذكي</div>
+      <div class="landing-sub">بصيرة وبوصلة — مدرسة البخاري الشاملة</div>
+      <div style="font-size:12px;color:#2ecc8f;font-weight:700;margin-top:-18px;margin-bottom:18px;background:#e8faf3;border-radius:8px;padding:5px 12px;border:1px solid #b8e8d4">إدارة المنصة: مركزة التقييم منى مصطفى</div>
+
+      <!-- Step 1: choose role -->
+      <div id="landStep1">
+        <div class="role-cards">
+          <div class="role-card" id="rcTeacher" onclick="pickRole('teacher')">
+            <span class="role-icon">👩‍🏫</span>
+            <div class="role-lbl">معلم</div>
+            <div class="role-desc">إدخال بيانات المسح وحفظها</div>
+          </div>
+          <div class="role-card" id="rcAdmin" onclick="pickRole('admin')">
+            <span class="role-icon">🔑</span>
+            <div class="role-lbl">مركزة التقييم</div>
+            <div class="role-desc">الاطلاع على كل البيانات</div>
+          </div>
+        </div>
+        <button class="land-btn" onclick="goLandStep2()">دخول ←</button>
+        <div class="step-hint">اختر دورك ثم اضغط دخول</div>
+      </div>
+
+      <!-- Step 2a: Teacher name -->
+      <div id="landStep2T" style="display:none">
+        <input class="land-inp" id="landTeacherName" placeholder="اسم المعلم (كما تريد حفظه)"/>
+        <select class="land-inp" id="landTeacherSaved" onchange="loadSavedTeacher(this.value)">
+          <option value="">← استعادة جلسة سابقة (اختياري)</option>
+        </select>
+        <button class="land-btn" onclick="enterAsTeacher()">ابدأ المسح ←</button>
+        <div class="land-err" id="landErrT">الرجاء إدخال اسمك</div>
+        <button class="btn btn-sm" style="margin-top:10px;width:100%" onclick="resetLand()">← رجوع</button>
+      </div>
+
+      <!-- Step 2b: Admin password -->
+      <div id="landStep2A" style="display:none">
+        <input class="land-inp" id="landAdminPw" type="password" placeholder="كلمة السر" onkeydown="if(event.key==='Enter')enterAsAdmin()"/>
+        <button class="land-btn" onclick="enterAsAdmin()">دخول لوحة الإدارة ←</button>
+        <div class="land-err" id="landErrA">كلمة السر غير صحيحة</div>
+        <button class="btn btn-sm" style="margin-top:10px;width:100%" onclick="resetLand()">← رجوع</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN 1: TEACHER APP
+════════════════════════════════════ -->
+<div class="screen" id="screenTeacher">
+  <div class="header">
+    <div class="hdr-inner">
+      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="hdr-logo" onerror="this.style.display='none'"/>
+      <div class="hdr-txt">
+        <h1>منصة التقييم الذكي: بصيرة وبوصلة</h1>
+        <div class="hdr-sub">مدرسة البخاري الشاملة</div>
+        <div class="hdr-sup" id="hTeacherName">مركزة التقييم: منى مصطفى</div>
+      </div>
+      <div class="hdr-acts">
+        <div class="lang-sw">
+          <button class="lang-btn active" id="btnAr" onclick="setLang('ar')">AR</button>
+          <button class="lang-btn" id="btnHe" onclick="setLang('he')">HE</button>
+        </div>
+        <button class="btn-hdr gold" onclick="saveSession()" id="hBtnSave">💾 حفظ</button>
+        <button class="btn-hdr" onclick="exportPDF()" id="hBtnPdf">📥 PDF</button>
+        <button class="btn-hdr xl" onclick="exportExcel()">📊 Excel</button>
+        <button class="btn-hdr solid" id="hBtnSend" onclick="openSendModal()">🚀 إرسال للمركزة</button>
+        <button class="btn-hdr" onclick="goLanding()" style="border-color:rgba(255,255,255,.4)">← خروج</button>
+      </div>
+    </div>
+    <div class="mob-strip">
+      <button class="btn-mob gold" onclick="saveSession()">💾</button>
+      <button class="btn-mob" onclick="exportPDF()">📥</button>
+      <button class="btn-mob xl" onclick="exportExcel()">📊</button>
+      <button class="btn-mob solid" onclick="openSendModal()">🚀</button>
+      <button class="btn-mob" onclick="goLanding()">خروج</button>
+      <div class="lang-sw" style="margin-right:auto">
+        <button class="lang-btn active" onclick="setLang('ar')">AR</button>
+        <button class="lang-btn" onclick="setLang('he')">HE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="sb-head" id="sbHead">القائمة</div>
+      <div class="nav-item active" onclick="showSec('setup')" id="nav-setup"><div class="nav-dot d1"></div><span id="nSetup">بناء هيكل المسح</span></div>
+      <div class="nav-item" onclick="showSec('grades')" id="nav-grades"><div class="nav-dot d2"></div><span id="nGrades">إدخال العلامات</span></div>
+      <div class="nav-item" onclick="showSec('analysis')" id="nav-analysis"><div class="nav-dot d3"></div><span id="nAnalysis">لوحة التحليل</span></div>
+    </div>
+    <div class="content">
+
+      <!-- SETUP -->
+      <div class="section active" id="section-setup">
+        <div class="save-banner" id="saveBanner">
+          <div class="save-info"><span>💾</span><span id="saveStatus">لم يتم الحفظ بعد</span></div>
+          <div class="save-actions">
+            <button class="btn btn-sm btn-gold" onclick="saveSession()">💾 حفظ الآن</button>
+          </div>
+        </div>
+        <div class="motivate"><span style="font-size:22px">🌸</span><span id="motSetup">مرحباً! كل مسح تبنيه خطوة نحو فهم أعمق لاحتياجات طلابك.</span></div>
+        <div class="card">
+          <div class="card-title" id="cInfo">📋 معلومات المسح</div>
+          <div class="form-row">
+            <div class="form-group"><label id="lTeacher">اسم المعلم</label><input id="teacherName" placeholder="مثال: أحمد محمد"/></div>
+            <div class="form-group"><label id="lSubject">المادة الدراسية</label><input id="subject" placeholder="مثال: اللغة العربية"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label id="lSem">الفصل الدراسي</label>
+              <select id="semester"><option id="s1">الفصل الأول</option><option id="s2">الفصل الثاني</option><option id="s3">الفصل الثالث</option></select>
+            </div>
+            <div class="form-group"><label id="lYear">السنة الدراسية</label><input id="year" value="2024-2025"/></div>
+          </div>
+        </div>
+        <!-- SUBJECT / LANGUAGE CARD -->
+        <div class="card" id="cardSubject">
+          <div class="card-title">📚 المادة ونوع الامتحان</div>
+          <div class="subject-picker" id="subjectPicker">
+            <div class="subj-card" id="sj-arabic" onclick="pickSubject('arabic')">
+              <div class="sj-ico">📖</div>
+              <div class="sj-lbl">لغة عربية</div>
+              <div class="sj-lang">AR — عربي</div>
+            </div>
+            <div class="subj-card" id="sj-hebrew" onclick="pickSubject('hebrew')">
+              <div class="sj-ico">✡️</div>
+              <div class="sj-lbl">עברית</div>
+              <div class="sj-lang">HE — עברי</div>
+            </div>
+            <div class="subj-card" id="sj-english" onclick="pickSubject('english')">
+              <div class="sj-ico">🇬🇧</div>
+              <div class="sj-lbl">English</div>
+              <div class="sj-lang">EN — English</div>
+            </div>
+            <div class="subj-card" id="sj-math" onclick="pickSubject('math')">
+              <div class="sj-ico">🔢</div>
+              <div class="sj-lbl">رياضيات / Math</div>
+              <div class="sj-lang">AR/HE/EN</div>
+            </div>
+            <div class="subj-card" id="sj-science" onclick="pickSubject('science')">
+              <div class="sj-ico">🔬</div>
+              <div class="sj-lbl">علوم / Science</div>
+              <div class="sj-lang">AR/HE/EN</div>
+            </div>
+            <div class="subj-card" id="sj-other" onclick="pickSubject('other')">
+              <div class="sj-ico">📝</div>
+              <div class="sj-lbl">أخرى / Other</div>
+              <div class="sj-lang">Any</div>
+            </div>
+          </div>
+          <div id="subjectHint" style="font-size:11px;color:#6b9980;margin-top:6px;display:none">
+            ✅ <span id="subjectHintText"></span> — سيستخدم الذكاء الاصطناعي مستويات بلوم ومهارات المادة تلقائياً
+          </div>
+        </div>
+
+        <!-- INPUT METHOD CHOICE -->
+        <div class="card" id="cardMethodChoice">
+          <div class="card-title">🔀 طريقة إدخال بيانات الامتحان</div>
+          <div class="method-choice">
+            <div class="mc-opt" id="mcManual" onclick="chooseMethod('manual')">
+              <div class="mc-ico">✍️</div>
+              <div class="mc-ttl">إدخال يدوي</div>
+              <div class="mc-dsc">أضف المهارات والأسئلة يدوياً</div>
+            </div>
+            <div class="mc-opt" id="mcUpload" onclick="chooseMethod('upload')">
+              <div class="mc-ico">📄</div>
+              <div class="mc-ttl">رفع ملف الامتحان</div>
+              <div class="mc-dsc">رفع Word/PDF وتحليله تلقائياً بالذكاء الاصطناعي</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANUAL: SKILLS + QUESTIONS -->
+        <div id="manualSection">
+        <div class="card">
+          <div class="card-title" id="cSkills">🎯 المهارات المقيّمة</div>
+          <div class="skills-list" id="skillsList"><span style="font-size:12px;color:#6b9980" id="noSkills">لم تُضف مهارات بعد</span></div>
+          <div class="skill-row" style="align-items:flex-start">
+            <div class="form-group" style="flex:1">
+              <textarea id="skillInput" rows="3" style="resize:vertical;width:100%;padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;color:#1a2e22;font-family:inherit;font-size:13px;transition:border-color .15s;line-height:1.7" dir="auto" placeholder="اكتب مهارة واحدة أو عدة مهارات&#10;كل مهارة في سطر منفرد..."></textarea>
+            </div>
+            <button class="btn btn-mint btn-sm" onclick="addSkill()" id="btnAddSk" style="margin-top:2px">+ إضافة</button>
+          </div>
+          <p style="font-size:11px;color:#6b9980;margin-top:6px" id="skHint">يمكنك كتابة عدة مهارات دفعة واحدة — كل مهارة في سطر</p>
+        </div>
+        <div class="card">
+          <div class="card-title" id="cQs">📝 الأسئلة والعلامات القصوى</div>
+          <div class="q-list" id="qList"><p style="font-size:12px;color:#6b9980" id="noQs">لا أسئلة بعد.</p></div>
+          <button class="btn btn-sm" style="margin-top:11px" onclick="addQ()" id="btnAddQ">+ إضافة سؤال</button>
+        </div>
+        </div>
+
+        <!-- AI UPLOAD SECTION -->
+        <div id="uploadSection" class="section-hidden">
+          <div class="card">
+            <div class="card-title">📤 رفع ملف الامتحان</div>
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('examFileInput').click()"
+              ondragover="event.preventDefault();this.classList.add('drag')"
+              ondragleave="this.classList.remove('drag')"
+              ondrop="handleFileDrop(event)">
+              <input type="file" id="examFileInput" accept=".pdf,.doc,.docx" onchange="handleFileSelect(event)"/>
+              <div class="upload-icon">📂</div>
+              <div class="upload-lbl">اسحب الملف هنا أو انقر للاختيار</div>
+              <div class="upload-sub">يدعم: PDF, Word (.doc, .docx)</div>
+              <div id="uploadFileName"></div>
+            </div>
+            <button class="btn btn-mint" id="btnAnalyzeFile" onclick="analyzeExamFile()" style="display:none;width:100%">🤖 تحليل الامتحان بالذكاء الاصطناعي</button>
+          </div>
+
+          <!-- AI RESULT TABLE -->
+          <div class="card section-hidden" id="aiResultCard">
+            <div class="card-title">📊 جدول بيانات الامتحان <span style="font-size:11px;color:#6b9980;font-weight:400">— يمكنك تعديل أي خلية</span></div>
+            <div id="bloomDistWrap" class="bloom-bar-wrap section-hidden"></div>
+            <div id="aiLoadingBox" class="section-hidden">
+              <div class="ai-loading"><div class="spinner"></div><span>يقوم الذكاء الاصطناعي بتحليل الامتحان... قد يستغرق ذلك لحظات</span></div>
+            </div>
+            <div id="aiTableWrap" class="ai-table-wrap"></div>
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" id="aiTableActions" class="section-hidden">
+              <button class="btn btn-sm" onclick="addAiRow()">+ إضافة سطر</button>
+              <button class="btn btn-mint btn-sm" onclick="applyAiTable()">✅ تطبيق الجدول وإضافة الصف</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" id="cCls">🏫 الصفوف الدراسية</div>
+          <div id="clsSummary"><p style="font-size:12px;color:#6b9980" id="noCls">لا صفوف مضافة.</p></div>
+          <button class="btn btn-mint" style="margin-top:12px" onclick="openClsModal()" id="btnAddCls">+ إضافة صف جديد</button>
+        </div>
+      </div>
+
+      <!-- GRADES -->
+      <div class="section" id="section-grades">
+        <div class="motivate"><span style="font-size:22px">🌼</span><span id="motGrades">كل علامة تُدخلها معلومة تساعد في دعم نجاح طلابك!</span></div>
+        <div class="threshold-row">
+          <label>🎯 نسبة النجاح:</label>
+          <input class="threshold-inp" id="passingPct" type="number" min="1" max="100" value="60" onchange="setPassingPct(this.value)"/>
+          <span style="font-size:12px;color:#7a5e00;font-weight:700">%</span>
+          <span style="font-size:11px;color:#6b9980;margin-right:auto">تؤثر على ألوان التقييم والتقارير</span>
+        </div>
+        <div class="paste-hint">💡 <span id="pasteHint">يمكنك نسخ بيانات من Excel ولصقها بـ Ctrl+V في أول خلية</span></div>
+        <div style="display:flex;gap:7px;margin-bottom:10px;align-items:center;flex-wrap:wrap">
+          <div class="tabs" id="clsTabs" style="margin-bottom:0;flex:1;min-width:0"></div>
+          <button class="btn btn-sm btn-sky" onclick="toggleFullscreen()" id="fsBtn" style="flex-shrink:0">⛶ ملء الشاشة</button>
+          <label class="btn btn-sm" style="cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;border-color:#c8b8f0;color:#6344b8">
+            📥 استيراد Excel
+            <input type="file" id="xlImportInput" accept=".xlsx,.xls,.csv" onchange="importStudentsFromExcel(event)"/>
+          </label>
+        </div>
+        <div id="fsExitBar" style="display:none;justify-content:flex-end;gap:8px;margin-bottom:8px;align-items:center">
+          <span style="font-size:12px;color:#6b9980;flex:1">📱 وضع ملء الشاشة — اضغط ESC أو الزر للخروج</span>
+          <button class="btn btn-sm btn-rose" onclick="toggleFullscreen()">✕ خروج</button>
+        </div>
+        <div id="gradesContent"></div>
+      </div>
+
+      <!-- ANALYSIS -->
+      <div class="section" id="section-analysis">
+        <div class="motivate"><span style="font-size:22px">🌈</span><span id="motAnalysis">البيانات تكشف الحقيقة — استخدم هذا التحليل لتخطيط خطوتك التالية!</span></div>
+        <div id="sendStatusBox"></div>
+        <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:14px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-gold" onclick="saveSession()">💾 حفظ</button>
+          <button class="btn btn-sm" onclick="exportPDF()" id="aBtnPdf">📥 PDF</button>
+          <button class="btn btn-sm" style="background:#1D6F42;color:#fff;border-color:#1D6F42" onclick="exportExcel()">📊 Excel</button>
+          <button class="btn btn-sm btn-sky" onclick="openCompareModal()">📈 مقارنة الفصول</button>
+          <button class="btn btn-mint btn-sm" id="aBtnSend" onclick="openSendModal()">🚀 إرسال للمركزة</button>
+        </div>
+        <div id="analysisContent"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mobile-nav">
+    <div class="mn-item active" id="mob-setup" onclick="showSec('setup')"><span class="mn-icon">⚙️</span><span id="mnSetup">مسح</span></div>
+    <div class="mn-item" id="mob-grades" onclick="showSec('grades')"><span class="mn-icon">📝</span><span id="mnGrades">علامات</span></div>
+    <div class="mn-item" id="mob-analysis" onclick="showSec('analysis')"><span class="mn-icon">📊</span><span id="mnAnalysis">تحليل</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN 2: ADMIN PANEL
+════════════════════════════════════ -->
+<div class="screen" id="screenAdmin">
+  <div class="header">
+    <div class="hdr-inner">
+      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="hdr-logo" onerror="this.style.display='none'"/>
+      <div class="hdr-txt">
+        <h1>🔑 لوحة إدارة مركزة التقييم</h1>
+        <div class="hdr-sub">منصة التقييم الذكي: بصيرة وبوصلة</div>
+        <div class="hdr-sup">منى مصطفى — مدرسة البخاري الشاملة</div>
+      </div>
+      <div class="hdr-acts">
+        <button class="btn-hdr" onclick="exportAdminPDF()">📥 PDF</button>
+        <button class="btn-hdr xl" onclick="exportAdminExcel()">📊 Excel</button>
+        <button class="btn-hdr" onclick="goLanding()">← خروج</button>
+      </div>
+    </div>
+  </div>
+  <div class="admin-panel">
+    <!-- FILTERS SIDEBAR -->
+    <div class="admin-sidebar">
+      <div class="admin-filter-card">
+        <div class="admin-filter-title">👩‍🏫 المعلم</div>
+        <select class="filter-sel" id="af-teacher" onchange="adminFilter()">
+          <option value="">كل المعلمين</option>
+        </select>
+      </div>
+      <div class="admin-filter-card">
+        <div class="admin-filter-title">📅 السنة / الفصل</div>
+        <select class="filter-sel" id="af-year" onchange="adminFilter()">
+          <option value="">كل السنوات</option>
+        </select>
+        <select class="filter-sel" id="af-sem" onchange="adminFilter()">
+          <option value="">كل الفصول</option>
+        </select>
+      </div>
+      <div class="admin-filter-card">
+        <div class="admin-filter-title">📝 الامتحانات / المواد</div>
+        <div class="filter-multi" id="af-subjects"></div>
+      </div>
+      <div class="admin-filter-card">
+        <div class="admin-filter-title">🏫 الصفوف</div>
+        <div class="filter-multi" id="af-classes"></div>
+      </div>
+      <button class="btn btn-mint btn-sm" style="width:100%;margin-top:4px" onclick="adminFilter()">🔄 تحديث التحليل</button>
+      <button class="btn btn-sm" style="width:100%;margin-top:6px;color:#c04060;border-color:#f5b8d4" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
+      <button class="btn btn-sm" style="width:100%;margin-top:6px;color:#6344b8;border-color:#c8b8f0;background:#f3efff" onclick="openChangePwModal()">🔒 تغيير كلمة السر</button>
+    </div>
+    <!-- ADMIN CONTENT -->
+    <div class="admin-content" id="adminContent">
+      <div class="empty-admin"><div style="font-size:40px;margin-bottom:12px">📊</div><p>اختر فلاتر من القائمة الجانبية لعرض التحليل</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLASS MODAL -->
+<div class="modal-overlay" id="clsModal">
+  <div class="modal">
+    <div class="modal-hdr"><span id="clsModalTitle">🏫 إضافة صف جديد</span><span class="modal-x" onclick="closeClsModal()">×</span></div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label id="clsNameLbl">اسم الصف</label>
+      <input id="newClsName" placeholder="مثال: السابع ج"/>
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label id="clsStLbl">أسماء الطلاب — كل اسم في سطر</label>
+      <textarea id="newClsSt" rows="7" style="resize:vertical;width:100%;padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:11px;background:#f7fdf9;color:#1a2e22;font-family:inherit;font-size:13px" placeholder="عمر خالد&#10;سارة أحمد&#10;محمد علي"></textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-sm" onclick="closeClsModal()" id="clsCancelBtn">إلغاء</button>
+      <button class="btn btn-mint btn-sm" onclick="saveCls()" id="clsSaveBtn">حفظ وإنشاء الجدول ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEND MODAL -->
+<div class="modal-overlay" id="sendModal">
+  <div class="send-modal">
+    <div id="sStep1">
+      <div class="send-hdr"><span>إرسال التقرير للمركزة</span><span class="modal-x" onclick="closeSendModal()">×</span></div>
+      <div class="send-sub">اختر طريقة الإرسال</div>
+      <div class="step-dots"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div></div>
+      <div class="method-cards">
+        <div class="mc" id="mc-email" onclick="pickMethod('email')"><span class="mc-icon">📧</span><div class="mc-lbl">بريد إلكتروني</div><div class="mc-desc">Excel + PDF عبر البريد</div></div>
+        <div class="mc wa" id="mc-wa" onclick="pickMethod('wa')"><span class="mc-icon">💬</span><div class="mc-lbl">واتساب</div><div class="mc-desc">ملخص عبر واتساب</div></div>
+      </div>
+      <div class="send-acts">
+        <button class="btn btn-sm" onclick="closeSendModal()">إلغاء</button>
+        <button class="btn btn-mint btn-sm" id="s1Next" onclick="goSendStep2()" disabled style="opacity:.5;cursor:not-allowed">التالي ←</button>
+      </div>
+    </div>
+    <div id="sStep2" style="display:none">
+      <div class="send-hdr"><span id="s2Title">بيانات التواصل</span><span class="modal-x" onclick="closeSendModal()">×</span></div>
+      <div class="send-sub" id="s2Sub"></div>
+      <div class="step-dots"><div class="sdot"></div><div class="sdot active"></div><div class="sdot"></div></div>
+      <div class="c-field"><label id="s2Label">البريد الإلكتروني</label><input id="contactVal" type="email" placeholder="mona@school.edu.jo"/></div>
+      <div class="info-box em" id="s2InfoBox">📎 سيتم تحضير Excel وفتح تطبيق البريد.</div>
+      <div class="send-acts">
+        <button class="btn btn-sm" onclick="goSendStep1()">← رجوع</button>
+        <button class="btn btn-mint btn-sm" onclick="goSendStep3()">إرسال ←</button>
+      </div>
+    </div>
+    <div id="sStep3" style="display:none">
+      <div class="send-hdr"><span id="s3Title">جارٍ الإرسال...</span><span class="modal-x" onclick="closeSendModal()">×</span></div>
+      <div class="step-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot active"></div></div>
+      <div id="s3Body" style="text-align:center;padding:18px 0"><div style="font-size:36px;margin-bottom:10px">⏳</div><p style="color:#6b9980;font-size:13px">يرجى الانتظار...</p></div>
+      <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="send-acts" style="justify-content:center;margin-top:7px">
+        <button class="btn btn-mint btn-sm" id="s3CloseBtn" onclick="closeSendModal()" style="display:none">✓ إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changePwModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-hdr"><span>🔒 تغيير كلمة السر</span><span class="modal-x" onclick="closeChangePwModal()">×</span></div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label style="font-size:11px;color:#6b9980;font-weight:700">كلمة السر الحالية</label>
+      <input id="pwCurrent" type="password" placeholder="أدخل كلمة السر الحالية" style="width:100%;padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;font-family:inherit;font-size:13px;margin-top:4px"/>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label style="font-size:11px;color:#6b9980;font-weight:700">كلمة السر الجديدة</label>
+      <input id="pwNew" type="password" placeholder="أدخل كلمة السر الجديدة" style="width:100%;padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;font-family:inherit;font-size:13px;margin-top:4px"/>
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label style="font-size:11px;color:#6b9980;font-weight:700">تأكيد كلمة السر الجديدة</label>
+      <input id="pwConfirm" type="password" placeholder="أعد كتابة كلمة السر الجديدة" style="width:100%;padding:9px 12px;border:1.5px solid #c8e8d8;border-radius:10px;background:#f7fdf9;font-family:inherit;font-size:13px;margin-top:4px"/>
+    </div>
+    <div id="pwErr" style="color:#c04060;font-size:12px;margin-bottom:10px;display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-sm" onclick="closeChangePwModal()">إلغاء</button>
+      <button class="btn btn-sm" style="background:#6344b8;color:#fff;border-color:#6344b8" onclick="doChangePw()">✓ تغيير كلمة السر</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF OPTIONS MODAL -->
+<div class="modal-overlay" id="pdfOptionsModal">
+  <div class="pdf-modal">
+    <div class="pdf-modal-hdr">
+      <div class="pdf-modal-title">📄 خيارات التقرير</div>
+      <span class="modal-x" onclick="closePdfModal()">×</span>
+    </div>
+    <div class="pdf-modal-sub">اختر الأقسام التي تريد ظهورها في ملف PDF</div>
+
+    <div class="pdf-sections-grid">
+      <div class="pdf-sec-item checked" id="pdfopt-header" onclick="togglePdfOpt(this,'header')">
+        <div class="pdf-sec-ico">🏫</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">معلومات المسح</div>
+          <div class="pdf-sec-desc">اسم المعلم، المادة، الفصل، التاريخ</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-stats" onclick="togglePdfOpt(this,'stats')">
+        <div class="pdf-sec-ico">📊</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">الإحصاءات العامة</div>
+          <div class="pdf-sec-desc">عدد الطلاب، المتوسط، أعلى وأدنى علامة</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-chart" onclick="togglePdfOpt(this,'chart')">
+        <div class="pdf-sec-ico">📈</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">الرسم البياني لتوزيع العلامات</div>
+          <div class="pdf-sec-desc">عرض مرئي لتوزيع مستويات الطلاب</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-bloom" onclick="togglePdfOpt(this,'bloom')">
+        <div class="pdf-sec-ico">🎓</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">توزيع مستويات بلوم</div>
+          <div class="pdf-sec-desc">تحليل الأسئلة وفق تصنيف بلوم المعرفي</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-skills" onclick="togglePdfOpt(this,'skills')">
+        <div class="pdf-sec-ico">🎯</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">أداء المهارات</div>
+          <div class="pdf-sec-desc">نسبة إتقان كل مهارة من المهارات المقيّمة</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-classes" onclick="togglePdfOpt(this,'classes')">
+        <div class="pdf-sec-ico">🏛️</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">ملخص الصفوف</div>
+          <div class="pdf-sec-desc">متوسط كل صف ومقارنة بين الصفوف</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-insights" onclick="togglePdfOpt(this,'insights')">
+        <div class="pdf-sec-ico">💡</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">التحليل والتوصيات</div>
+          <div class="pdf-sec-desc">ملاحظات تلقائية وخطة عمل مقترحة</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-grades" onclick="togglePdfOpt(this,'grades')">
+        <div class="pdf-sec-ico">📝</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">جداول علامات الطلاب</div>
+          <div class="pdf-sec-desc">صفحة مفصلة لكل صف بعلامات كل طالب</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+      <div class="pdf-sec-item checked" id="pdfopt-aisummary" onclick="togglePdfOpt(this,'aisummary')">
+        <div class="pdf-sec-ico">🤖</div>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-lbl">الملخص الذكي (AI)</div>
+          <div class="pdf-sec-desc">تحليل شامل بالذكاء الاصطناعي — يضيف بضع ثوانٍ للتحميل</div>
+        </div>
+        <div class="pdf-sec-chk"></div>
+      </div>
+    </div>
+
+    <div class="pdf-ai-note">
+      <span style="font-size:16px;flex-shrink:0">ℹ️</span>
+      <span>إذا أزلت <b>الملخص الذكي</b> سيتم التحميل فوراً بدون انتظار. اختر الأقسام التي تحتاجها فقط لتخفيف حجم التقرير.</span>
+    </div>
+
+    <div class="pdf-modal-acts">
+      <button class="btn btn-sm" onclick="selectAllPdfOpts(true)">تحديد الكل</button>
+      <button class="btn btn-sm" onclick="selectAllPdfOpts(false)">إلغاء الكل</button>
+      <button class="btn btn-sm" onclick="closePdfModal()">إلغاء</button>
+      <button class="btn btn-sky" id="wordGenerateBtn" onclick="generateWord()" title="تحميل كملف Word قابل للتعديل">📝 تنزيل Word</button>
+      <button class="btn btn-mint" id="pdfGenerateBtn" onclick="generatePDF()">📥 إنشاء PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+<div id="toastWrap"></div>
+
+<!-- DARK MODE TOGGLE -->
+<button class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="الوضع الليلي">🌙</button>
+
+<!-- STUDENT REPORT MODAL -->
+<div class="modal-overlay" id="stRepModal">
+  <div class="st-rep-modal">
+    <div class="st-rep-hdr">
+      <div>
+        <div class="st-rep-name" id="stRepName"></div>
+        <div style="font-size:11px;color:#6b9980;margin-top:2px" id="stRepClass"></div>
+      </div>
+      <span class="modal-x" onclick="closeStRep()">×</span>
+    </div>
+    <div id="stRepContent"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="closeStRep()">إغلاق</button>
+      <button class="btn btn-mint btn-sm" onclick="printStRep()">🖨️ طباعة / PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON MODAL -->
+<div class="modal-overlay" id="compareModal">
+  <div class="modal" style="width:560px;max-width:96vw">
+    <div class="modal-hdr"><span>📈 مقارنة بين الفصول الدراسية</span><span class="modal-x" onclick="closeCompareModal()">×</span></div>
+    <div id="compareContent"></div>
+    <div style="text-align:left;margin-top:12px"><button class="btn btn-sm" onclick="closeCompareModal()">إغلاق</button></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ════════════════════════════════════════
+   CONSTANTS & STATE
+════════════════════════════════════════ */
+var ADMIN_PW=(function(){try{var s=localStorage.getItem('baseeraBoosla_adminPw');return s||'200481';}catch(e){return'200481';}})();
+var STORAGE_KEY='baseeraBoosla_v1';
+var SESSIONS_KEY='baseeraBoosla_sessions_v1';
+var CC=['#2ecc8f','#5bb8f5','#9b7fe8','#ff8c69','#f5c842','#ff6b9d','#1D9E75','#378ADD'];
+var SHEETS_URL='https://script.google.com/macros/s/AKfycbx7axnJ_Z_MvFgE1LVq7Kij0QKOG7ZzReEUVLetQKCrine4Wbr4mVtWUypUlAoTYKr8PQ/exec';
+var S={skills:[],questions:[],classes:{},activeClass:null};
+var qCount=0,LANG='ar',sendMethod=null,currentRole='',currentTeacher='';
+var lastSaved=null;
+var autoSaveTimer=null;
+var PASSING_PCT=60;
+var DARK_MODE=false;
+var FS_MODE=false;
+
+/* ════════════════════════════════════════
+   TRANSLATIONS (short version)
+════════════════════════════════════════ */
+var TR={
+ar:{
+  sbHead:'القائمة',nSetup:'بناء هيكل المسح',nGrades:'إدخال العلامات',nAnalysis:'لوحة التحليل',
+  motSetup:'مرحباً! كل مسح تبنيه خطوة نحو فهم أعمق لاحتياجات طلابك.',
+  motGrades:'كل علامة تُدخلها معلومة تساعد في دعم نجاح طلابك!',
+  motAnalysis:'البيانات تكشف الحقيقة — استخدم هذا التحليل لتخطيط خطوتك التالية!',
+  cInfo:'📋 معلومات المسح',lTeacher:'اسم المعلم',lSubject:'المادة الدراسية',
+  lSem:'الفصل الدراسي',lYear:'السنة الدراسية',
+  s1:'الفصل الأول',s2:'الفصل الثاني',s3:'الفصل الثالث',
+  cSkills:'🎯 المهارات المقيّمة',noSkills:'لم تُضف مهارات بعد',
+  btnAddSk:'+ إضافة',skHint:'مثال: فهم المعنى الخفي، تعبير كتابي...',
+  cQs:'📝 الأسئلة والعلامات القصوى',noQs:'لا أسئلة بعد.',
+  btnAddQ:'+ إضافة سؤال',cCls:'🏫 الصفوف الدراسية',noCls:'لا صفوف مضافة.',
+  btnAddCls:'+ إضافة صف جديد',pasteHint:'يمكنك نسخ البيانات من Excel ولصقها بـ Ctrl+V',
+  mnSetup:'مسح',mnGrades:'علامات',mnAnalysis:'تحليل',
+  stWord:'طالب',clWord:'صف',
+  evalExc:'ممتاز',evalGood:'جيد',evalAcc:'مقبول',evalNeed:'يحتاج دعم',
+  insTitle:'💡 תובנות — ملخص النتائج',recTitle:'📋 המלצות — خطة عمل',
+  overallHi:'المستوى العام ممتاز — نسبة إتقان مرتفعة.',
+  overallMd:'المستوى العام متوسط — يوجد مجال للتحسين.',
+  overallLo:'المستوى العام منخفض — يجب اتخاذ إجراءات داعمة عاجلة.',
+  skHi:'مهارة "{s}" تُظهر إتقاناً ممتازاً ({p}%).',
+  skLo:'مهارة "{s}" تحتاج دعماً عاجلاً ({p}%).',
+  clTop:'صف {c} يتصدر النتائج بمتوسط {p}%.',
+  clLo:'صف {c} يحتاج اهتماماً خاصاً (متوسط {p}%).',
+  rec1:'تخصيص حصص تدخل للمهارات أقل من 60%.',
+  rec2:'تبادل الخبرات بين معلمي الصفوف المتميزة.',
+  rec3:'تصميم أنشطة تعاونية لرفع مستوى الطلاب.',
+  rec4:'إعادة اختبار المهارات الضعيفة بعد التدخل.',
+  rec5:'توثيق أسباب الفجوة بين الصفوف.',
+  statStudents:'عدد الطلاب',statAvg:'متوسط العلامة',statPct:'النسبة المئوية',statCls:'عدد الصفوف',
+  distTitle:'📊 توزيع العلامات',
+  noData:'لا بيانات كافية',maxWarn:'الحد الأقصى هو {m}',pastedN:'{n} قيمة ✅',
+  pdfHdr:'منصة التقييم الذكي: بصيرة وبوصلة',
+  pdfSchool:'مدرسة البخاري الشاملة',pdfSup:'مركزة التقييم: منى مصطفى',
+  pdfTeacher:'المعلم',pdfSubject:'المادة',pdfSem:'الفصل',pdfDate:'التاريخ',
+  pdfSummary:'الملخص العام',pdfSkills:'أداء المهارات',pdfClasses:'تفصيل الصفوف',
+  pdfGrades:'كشف علامات — الصف: ',pdfClSkills:'أداء المهارات في هذا الصف',
+  pdfStName:'اسم الطالب',pdfTotal:'المجموع',pdfPct:'%',pdfEval:'التقييم',
+  pdfIns:'تحليل وتوصيات',pdfInsLbl:'ملخص النتائج',pdfRecLbl:'خطة العمل',
+  pdfFoot:'منصة التقييم الذكي: بصيرة وبوصلة',
+  xlTitle:'منصة التقييم الذكي: بصيرة وبوصلة',
+  xlSum:'ملخص',xlAll:'جميع الطلاب',xlStName:'اسم الطالب',
+  xlTotal:'المجموع',xlPct:'النسبة %',xlEval:'التقييم',xlClSkills:'المهارات',
+  rptTxt:'تقرير من منصة التقييم الذكي — مدرسة البخاري الشاملة'
+},
+he:{
+  sbHead:'תפריט',nSetup:'בניית סקר',nGrades:'הזנת ציונים',nAnalysis:'לוח ניתוח',
+  motSetup:'כל סקר שאתה בונה הוא צעד לקראת הבנת צרכי התלמידים!',
+  motGrades:'כל ציון שאתה מזין עוזר לתמוך בהצלחת התלמידים!',
+  motAnalysis:'הנתונים חושפים את האמת — תכנן את הצעד הבא!',
+  cInfo:'📋 פרטי הסקר',lTeacher:'שם המורה',lSubject:'מקצוע',
+  lSem:'סמסטר',lYear:'שנת לימודים',
+  s1:'סמסטר א\'',s2:'סמסטר ב\'',s3:'סמסטר ג\'',
+  cSkills:'🎯 מיומנויות',noSkills:'טרם נוספו מיומנויות',
+  btnAddSk:'+ הוסף',skHint:'לדוגמה: הבנת הנקרא, ביטוי בכתב...',
+  cQs:'📝 שאלות',noQs:'אין שאלות.',
+  btnAddQ:'+ הוסף שאלה',cCls:'🏫 כיתות',noCls:'לא נוספו כיתות.',
+  btnAddCls:'+ הוסף כיתה',pasteHint:'ניתן להעתיק מ-Excel עם Ctrl+V',
+  mnSetup:'מבנה',mnGrades:'ציונים',mnAnalysis:'ניתוח',
+  stWord:'תלמיד',clWord:'כיתה',
+  evalExc:'מצוין',evalGood:'טוב',evalAcc:'מקובל',evalNeed:'זקוק לתמיכה',
+  insTitle:'💡 תובנות',recTitle:'📋 המלצות',
+  overallHi:'רמה כללית מצוינת.',overallMd:'רמה כללית בינונית.',overallLo:'רמה כללית נמוכה.',
+  skHi:'מיומנות "{s}" מצוינת ({p}%).',skLo:'מיומנות "{s}" זקוקה לתגבור ({p}%).',
+  clTop:'כיתה {c} מובילה עם {p}%.',clLo:'כיתה {c} זקוקה לתשומת לב ({p}%).',
+  rec1:'שיעורי התערבות למיומנויות מתחת ל-60%.',rec2:'שיתוף ניסיון בין מורים.',
+  rec3:'פעילויות למידה שיתופית.',rec4:'בדיקה חוזרת אחרי התערבות.',rec5:'תיעוד פערים.',
+  statStudents:'תלמידים',statAvg:'ממוצע',statPct:'אחוז',statCls:'כיתות',
+  distTitle:'📊 התפלגות ציונים',
+  noData:'אין נתונים',maxWarn:'המקסימום הוא {m}',pastedN:'{n} ערכים ✅',
+  pdfHdr:'פלטפורמת ההערכה החכמה',pdfSchool:'בית הספר אל-בוח\'ארי',pdfSup:'מרכזת הערכה: מונא מוסטפא',
+  pdfTeacher:'מורה',pdfSubject:'מקצוע',pdfSem:'סמסטר',pdfDate:'תאריך',
+  pdfSummary:'סיכום',pdfSkills:'מיומנויות',pdfClasses:'כיתות',
+  pdfGrades:'ציונים — כיתה: ',pdfClSkills:'מיומנויות בכיתה',
+  pdfStName:'תלמיד',pdfTotal:'סה"כ',pdfPct:'%',pdfEval:'הערכה',
+  pdfIns:'תובנות והמלצות',pdfInsLbl:'תובנות',pdfRecLbl:'המלצות',
+  pdfFoot:'פלטפורמת ההערכה החכמה',
+  xlTitle:'פלטפורמת ההערכה החכמה',xlSum:'סיכום',xlAll:'כל התלמידים',
+  xlStName:'תלמיד',xlTotal:'סה"כ',xlPct:'אחוז',xlEval:'הערכה',xlClSkills:'מיומנויות',
+  rptTxt:'דוח מפלטפורמת ההערכה החכמה'
+}};
+function T(k){return(TR[LANG]&&TR[LANG][k])||TR.ar[k]||k;}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+function toast(msg,type,dur){
+  var w=document.getElementById('toastWrap');
+  var d=document.createElement('div');d.className='toast '+(type||'');d.textContent=msg;
+  w.appendChild(d);requestAnimationFrame(function(){d.classList.add('show')});
+  setTimeout(function(){d.classList.remove('show');setTimeout(function(){d.remove()},400)},dur||2800);
+}
+
+/* ════════════════════════════════════════
+   LANDING / ROLE SELECTION
+════════════════════════════════════════ */
+var selectedRole=null;
+function pickRole(r){
+  selectedRole=r;
+  document.getElementById('rcTeacher').classList.toggle('sel',r==='teacher');
+  document.getElementById('rcAdmin').classList.toggle('sel',r==='admin');
+}
+function goLandStep2(){
+  if(!selectedRole){toast('اختر دورك أولاً','w');return;}
+  document.getElementById('landStep1').style.display='none';
+  if(selectedRole==='teacher'){
+    document.getElementById('landStep2T').style.display='block';
+    populateSavedTeachers();
+  } else {
+    document.getElementById('landStep2A').style.display='block';
+    setTimeout(function(){document.getElementById('landAdminPw').focus();},100);
+  }
+}
+function resetLand(){
+  selectedRole=null;
+  document.getElementById('landStep1').style.display='block';
+  document.getElementById('landStep2T').style.display='none';
+  document.getElementById('landStep2A').style.display='none';
+  document.getElementById('rcTeacher').classList.remove('sel');
+  document.getElementById('rcAdmin').classList.remove('sel');
+  document.getElementById('landErrT').style.display='none';
+  document.getElementById('landErrA').style.display='none';
+}
+function populateSavedTeachers(){
+  var sessions=loadAllSessions();
+  var teachers=[...new Set(sessions.map(function(s){return s.teacherName;}))].filter(Boolean);
+  var sel=document.getElementById('landTeacherSaved');
+  sel.innerHTML='<option value="">← استعادة جلسة سابقة (اختياري)</option>';
+  sessions.forEach(function(s,i){
+    if(!s.teacherName)return;
+    var opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent=s.teacherName+' — '+s.subject+' — '+s.year+' ('+new Date(s.savedAt).toLocaleDateString('ar-SA')+')';
+    sel.appendChild(opt);
+  });
+}
+function loadSavedTeacher(idx){
+  if(idx==='')return;
+  var sessions=loadAllSessions();var s=sessions[parseInt(idx)];
+  if(!s)return;
+  document.getElementById('landTeacherName').value=s.teacherName||'';
+  toast('تم تحميل جلسة: '+s.subject,'s',2500);
+}
+function enterAsTeacher(){
+  var name=document.getElementById('landTeacherName').value.trim();
+  if(!name){document.getElementById('landErrT').style.display='block';return;}
+  document.getElementById('landErrT').style.display='none';
+  currentRole='teacher';currentTeacher=name;
+  /* check if we load saved */
+  var idx=document.getElementById('landTeacherSaved').value;
+  if(idx!==''){
+    var sessions=loadAllSessions();var s=sessions[parseInt(idx)];
+    if(s){restoreSession(s);}
+  } else {
+    resetState();
+  }
+  showScreen('screenTeacher');
+  document.getElementById('hTeacherName').textContent='المعلم: '+name+' | مركزة التقييم: منى مصطفى';
+  setLang('ar');
+  autoSaveStart();
+}
+function enterAsAdmin(){
+  var pw=document.getElementById('landAdminPw').value;
+  if(pw!==ADMIN_PW){document.getElementById('landErrA').style.display='block';return;}
+  document.getElementById('landErrA').style.display='none';
+  currentRole='admin';
+  showScreen('screenAdmin');
+  buildAdminFilters();
+  adminFilter();
+}
+function openChangePwModal(){
+  document.getElementById("pwCurrent").value="";
+  document.getElementById("pwNew").value="";
+  document.getElementById("pwConfirm").value="";
+  document.getElementById("pwErr").style.display="none";
+  document.getElementById("changePwModal").classList.add("open");
+}
+function closeChangePwModal(){document.getElementById("changePwModal").classList.remove("open");}
+function doChangePw(){
+  var cur=document.getElementById("pwCurrent").value;
+  var nw=document.getElementById("pwNew").value;
+  var cf=document.getElementById("pwConfirm").value;
+  var errEl=document.getElementById("pwErr");
+  if(cur!==ADMIN_PW){errEl.textContent="كلمة السر الحالية غير صحيحة";errEl.style.display="block";return;}
+  if(nw.length<4){errEl.textContent="كلمة السر الجديدة يجب أن تكون 4 أحرف على الأقل";errEl.style.display="block";return;}
+  if(nw!==cf){errEl.textContent="كلمتا السر الجديدتان غير متطابقتين";errEl.style.display="block";return;}
+  ADMIN_PW=nw;
+  try{localStorage.setItem("baseeraBoosla_adminPw",nw);}catch(e){}
+  closeChangePwModal();
+  toast("✅ تم تغيير كلمة السر بنجاح","s",2500);
+}
+function goLanding(){
+  if(autoSaveTimer){clearInterval(autoSaveTimer);autoSaveTimer=null;}
+  showScreen('screenLanding');
+  resetLand();
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+}
+
+/* ════════════════════════════════════════
+   LOCALSTORAGE PERSISTENCE
+════════════════════════════════════════ */
+function loadAllSessions(){
+  try{var raw=localStorage.getItem(SESSIONS_KEY);return raw?JSON.parse(raw):[];}catch(e){return[];}
+}
+function saveAllSessions(sessions){
+  try{localStorage.setItem(SESSIONS_KEY,JSON.stringify(sessions));}catch(e){toast('تعذّر الحفظ — التخزين ممتلئ','e');}
+}
+function buildSessionObj(){
+  return{
+    teacherName:document.getElementById('teacherName').value||currentTeacher,
+    subject:document.getElementById('subject').value||'',
+    semester:document.getElementById('semester').value||'',
+    year:document.getElementById('year').value||'',
+    skills:JSON.parse(JSON.stringify(S.skills)),
+    questions:JSON.parse(JSON.stringify(S.questions)),
+    classes:JSON.parse(JSON.stringify(S.classes)),
+    savedAt:new Date().toISOString()
+  };
+}
+function saveSession(){
+  var sess=buildSessionObj();
+  var sessions=loadAllSessions();
+  /* Find existing entry by teacherName+subject+year+semester */
+  var key=sess.teacherName+'|'+sess.subject+'|'+sess.year+'|'+sess.semester;
+  var found=-1;
+  sessions.forEach(function(s,i){
+    if((s.teacherName+'|'+s.subject+'|'+s.year+'|'+s.semester)===key)found=i;
+  });
+  if(found>=0)sessions[found]=sess;else sessions.push(sess);
+  saveAllSessions(sessions);
+  lastSaved=new Date();
+  var el=document.getElementById('saveStatus');
+  if(el)el.textContent='آخر حفظ: '+lastSaved.toLocaleTimeString('ar-SA');
+  toast('✅ تم الحفظ','s',2000);
+  syncSheets();
+}
+function restoreSession(s){
+  S.skills=s.skills||[];S.questions=s.questions||[];S.classes=s.classes||{};
+  S.activeClass=Object.keys(S.classes)[0]||null;
+  qCount=S.questions.length;
+  if(s.teacherName)setTimeout(function(){document.getElementById('teacherName').value=s.teacherName;},100);
+  if(s.subject)setTimeout(function(){document.getElementById('subject').value=s.subject;},100);
+  if(s.year)setTimeout(function(){document.getElementById('year').value=s.year;},100);
+}
+function resetState(){
+  S={skills:[],questions:[],classes:{},activeClass:null};qCount=0;
+}
+function autoSaveStart(){
+  if(autoSaveTimer)clearInterval(autoSaveTimer);
+  autoSaveTimer=setInterval(function(){
+    if(Object.keys(S.classes).length>0||S.skills.length>0)saveSession();
+  },60000); /* auto-save every 60 seconds */
+}
+
+/* ════════════════════════════════════════
+   LANGUAGE
+════════════════════════════════════════ */
+function setLang(l){
+  LANG=l;
+  var btnAr=document.getElementById('btnAr'),btnHe=document.getElementById('btnHe');
+  if(btnAr)btnAr.classList.toggle('active',l==='ar');
+  if(btnHe)btnHe.classList.toggle('active',l==='he');
+  var ids=['sbHead','nSetup','nGrades','nAnalysis','motSetup','motGrades','motAnalysis',
+    'cInfo','lTeacher','lSubject','lSem','lYear','s1','s2','s3',
+    'cSkills','noSkills','btnAddSk','skHint','cQs','noQs','btnAddQ',
+    'cCls','noCls','btnAddCls','pasteHint','mnSetup','mnGrades','mnAnalysis'];
+  ids.forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=T(id);});
+  renderGrades();renderAnalysis();
+}
+
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+function showSec(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  ['nav-setup','nav-grades','nav-analysis'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active')});
+  ['mob-setup','mob-grades','mob-analysis'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active')});
+  document.getElementById('section-'+id).classList.add('active');
+  var sn=document.getElementById('nav-'+id);if(sn)sn.classList.add('active');
+  var mn=document.getElementById('mob-'+id);if(mn)mn.classList.add('active');
+  if(id==='grades')renderGrades();
+  if(id==='analysis')renderAnalysis();
+  var c=document.querySelector('.content');if(c)c.scrollTop=0;
+}
+function gv(id){return(document.getElementById(id)||{}).value||'';}
+function getTotal(st,qs){var s=0;qs.forEach(function(q,i){s+=parseFloat(st.grades['q'+i])||0;});return s;}
+function skillPct(sts,qs,si){
+  var t=0,g=0;qs.forEach(function(q,i){if(q.skill===si){sts.forEach(function(st){t+=q.maxMark;g+=parseFloat(st.grades['q'+i])||0;});}});
+  return t?Math.round(g/t*100):null;
+}
+function getBins(sts,qs){
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);var b=[0,0,0,0];
+  sts.forEach(function(st){var p=tM?getTotal(st,qs)/tM*100:0;if(p<=40)b[0]++;else if(p<=60)b[1]++;else if(p<=80)b[2]++;else b[3]++;});return b;
+}
+function pctCls(p){return p>=(PASSING_PCT+20)?'ph':p>=PASSING_PCT?'pm':'pl';}
+function pctBadge(p){return p>=(PASSING_PCT+20)?'pct-hi':p>=PASSING_PCT?'pct-md':'pct-lo';}
+function evalStr(p){return p>=(PASSING_PCT+20)?T('evalExc'):p>=PASSING_PCT?T('evalGood'):p>=(PASSING_PCT-20)?T('evalAcc'):T('evalNeed');}
+function setPassingPct(v){PASSING_PCT=Math.max(1,Math.min(100,parseInt(v)||60));renderGrades();renderAnalysis();toast('✅ نسبة النجاح: '+PASSING_PCT+'%','s',1500);}
+
+/* ════════════════════════════════════════
+   SKILLS
+════════════════════════════════════════ */
+function addSkill(){
+  var raw=document.getElementById('skillInput').value;
+  var lines=raw.split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});
+  if(!lines.length)return;
+  var added=0,dupes=0;
+  lines.forEach(function(v){
+    if(S.skills.indexOf(v)>=0){dupes++;return;}
+    S.skills.push(v);added++;
+  });
+  document.getElementById('skillInput').value='';
+  renderSkills();
+  if(added&&dupes)toast('✅ أُضيف '+added+' — تجاهل '+dupes+' مكررة','w',2500);
+  else if(added)toast('✅ أُضيفت '+added+' مهارة','s',2000);
+  else toast('المهارات موجودة مسبقاً','w',2000);
+}
+document.getElementById('skillInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.ctrlKey)addSkill();});
+function renderSkills(){
+  var el=document.getElementById('skillsList');
+  if(!S.skills.length){el.innerHTML='<span style="font-size:12px;color:#6b9980">'+T('noSkills')+'</span>';return;}
+  el.innerHTML=S.skills.map(function(s,i){return'<div class="skill-tag">'+s+'<span class="rm" onclick="rmSkill('+i+')">×</span></div>';}).join('');
+}
+function rmSkill(i){S.skills.splice(i,1);renderSkills();}
+
+/* ════════════════════════════════════════
+   QUESTIONS
+════════════════════════════════════════ */
+function addQ(){
+  if(!S.skills.length){toast('أضف مهارات أولاً','w');return;}
+  qCount++;S.questions.push({text:'سؤال '+qCount,skill:0,bloom:2,maxMark:5});renderQs();
+}
+function renderQs(){
+  var el=document.getElementById('qList');
+  if(!S.questions.length){el.innerHTML='<p style="font-size:12px;color:#6b9980">'+T('noQs')+'</p>';return;}
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  var bloomOptHtml=BLOOM_LEVELS.map(function(b){
+    var lbl=sd.lang==='en'?b.en:sd.lang==='he'?b.he:b.ar;
+    return'<option value="'+b.id+'">'+b.icon+' '+lbl+'</option>';
+  }).join('');
+  el.innerHTML=S.questions.map(function(q,i){
+    var opts=S.skills.map(function(s,si){return'<option value="'+si+'"'+(q.skill===si?' selected':'')+'>'+s+'</option>';}).join('');
+    var bv=q.bloom||2;
+    var bCls=getBloomClass(bv);
+    var bOpts=bloomOptHtml.replace('value="'+bv+'"','value="'+bv+'" selected');
+    return'<div class="q-item"><span class="q-num">'+(i+1)+'</span>'
+      +'<input class="q-inp" value="'+q.text+'" onchange="S.questions['+i+'].text=this.value" dir="auto"/>'
+      +'<select class="q-sel" onchange="S.questions['+i+'].skill=parseInt(this.value)">'+opts+'</select>'
+      +'<select class="q-sel '+bCls+'" style="font-size:11px;max-width:120px" onchange="updQBloom(this,'+i+')">'+bOpts+'</select>'
+      +'<input class="q-mark" type="number" value="'+q.maxMark+'" min="1" onchange="S.questions['+i+'].maxMark=Math.max(1,parseInt(this.value)||1);this.value=S.questions['+i+'].maxMark"/>'
+      +'<button class="btn btn-xs btn-rose" onclick="rmQ('+i+')">×</button></div>';
+  }).join('');
+}
+function rmQ(i){S.questions.splice(i,1);renderQs();}
+function updQBloom(sel,i){
+  var v=parseInt(sel.value);
+  S.questions[i].bloom=v;
+  sel.className='q-sel '+getBloomClass(v);
+}
+
+/* ════════════════════════════════════════
+   CLASSES
+════════════════════════════════════════ */
+function openClsModal(){
+  if(!S.questions.length){toast('أضف أسئلة أولاً','w');return;}
+  document.getElementById('newClsName').value='';document.getElementById('newClsSt').value='';
+  document.getElementById('clsModal').classList.add('open');
+}
+function closeClsModal(){document.getElementById('clsModal').classList.remove('open');}
+function saveCls(){
+  var name=document.getElementById('newClsName').value.trim();
+  var raw=document.getElementById('newClsSt').value;
+  if(!name){toast('أدخل اسم الصف','w');return;}
+  var sts=raw.split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});
+  if(!sts.length){toast('أدخل أسماء الطلاب','w');return;}
+  S.classes[name]={students:sts.map(function(s){return{name:s,grades:{}};})};
+  if(!S.activeClass)S.activeClass=name;
+  closeClsModal();renderClsSummary();
+  toast('✅ '+name+' — '+sts.length+' '+T('stWord'),'s',3000);
+}
+function renderClsSummary(){
+  var el=document.getElementById('clsSummary');var ks=Object.keys(S.classes);
+  if(!ks.length){el.innerHTML='<p style="font-size:12px;color:#6b9980">'+T('noCls')+'</p>';return;}
+  el.innerHTML=ks.map(function(k,ki){
+    var c=CC[ki%CC.length];
+    return'<div class="cls-chip" style="border-color:'+c+'44;background:'+c+'11">'
+      +'<span style="font-size:13px;font-weight:700;color:'+c+'">'+k+' <span class="badge">'+S.classes[k].students.length+' '+T('stWord')+'</span></span>'
+      +'<button class="btn btn-xs btn-rose" onclick="rmCls(\''+k+'\')">حذف</button></div>';
+  }).join('');
+}
+function rmCls(name){delete S.classes[name];var ks=Object.keys(S.classes);S.activeClass=ks.length?ks[0]:null;renderClsSummary();}
+
+/* ════════════════════════════════════════
+   GRADES
+════════════════════════════════════════ */
+function renderGrades(){
+  var ks=Object.keys(S.classes),tabs=document.getElementById('clsTabs'),content=document.getElementById('gradesContent');
+  if(!ks.length){tabs.innerHTML='';content.innerHTML='<div class="empty"><div style="font-size:34px">📝</div><p>'+T('btnAddCls')+'</p></div>';return;}
+  if(!S.activeClass||!S.classes[S.activeClass])S.activeClass=ks[0];
+  tabs.innerHTML=ks.map(function(k,ki){
+    var c=CC[ki%CC.length],act=S.activeClass===k;
+    return'<div class="tab'+(act?' active':'')+'" onclick="switchCls(\''+k+'\')"'+(act?' style="background:'+c+';border-color:'+c+'"':'')+'>'+k+'</div>';
+  }).join('');
+  var cls=S.classes[S.activeClass],qs=S.questions;
+  if(!qs.length){content.innerHTML='<div class="empty"><div style="font-size:34px">⚙️</div><p>'+T('btnAddQ')+'</p></div>';return;}
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var h='<div class="card" style="overflow-x:auto"><table class="grades-table"><thead><tr>'
+    +'<th style="text-align:right;min-width:130px">'+T('pdfStName')+'</th>';
+  qs.forEach(function(q,i){h+='<th title="'+q.text+'">س'+(i+1)+'<br><span style="font-size:9px;font-weight:400;color:#aaa;max-width:60px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+q.text+'</span><span style="font-size:10px;color:#2ecc8f;font-weight:700">/'+q.maxMark+'</span></th>';});
+  h+='<th style="min-width:64px">المجموع</th><th style="min-width:52px">%</th><th>📋</th></tr></thead><tbody>';
+  cls.students.forEach(function(st,si){
+    var tot=getTotal(st,qs),pct=tM?Math.round(tot/tM*100):0;
+    var totCls=pctCls(pct);
+    h+='<tr><td style="cursor:pointer" onclick="openStRep(this)" data-cls="'+S.activeClass+'" data-si="'+si+'" title="عرض تقرير الطالب" dir="auto">'+st.name+'</td>';
+    qs.forEach(function(q,qi){
+      var v=st.grades['q'+qi];
+      h+='<td><input class="g-inp" type="number" min="0" max="'+q.maxMark+'" value="'+(v!==undefined&&v!==''?v:'')+'" data-si="'+si+'" data-qi="'+qi+'" data-max="'+q.maxMark+'" onchange="updGrade(this)" oninput="chkOver(this)" onkeydown="gradeKeyNav(event,'+si+','+qi+')" onpaste="onPaste(event,'+si+','+qi+')"/></td>';
+    });
+    h+='<td><span class="g-total '+totCls+'" id="tot-'+si+'">'+tot+'/'+tM+'</span></td>';
+    h+='<td class="'+totCls+'" id="pct-'+si+'">'+pct+'%</td>';
+    h+='<td><button class="btn btn-xs btn-sky" onclick="openStRepIdx(this)" data-cls="'+S.activeClass+'" data-si="'+si+'" title="تقرير فردي">📋</button></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';content.innerHTML=h;
+}
+function switchCls(n){S.activeClass=n;renderGrades();}
+function chkOver(inp){parseFloat(inp.value)>parseFloat(inp.dataset.max)?inp.classList.add('over'):inp.classList.remove('over');}
+function updGrade(inp){
+  var si=parseInt(inp.dataset.si),qi=parseInt(inp.dataset.qi),mx=parseFloat(inp.dataset.max),v=parseFloat(inp.value);
+  if(isNaN(v)||v<0)v=0;if(v>mx){v=mx;inp.value=mx;toast(T('maxWarn').replace('{m}',mx),'w');}
+  inp.classList.remove('over');
+  S.classes[S.activeClass].students[si].grades['q'+qi]=v;
+  /* live total update */
+  var qs=S.questions,tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var st=S.classes[S.activeClass].students[si];
+  var tot=getTotal(st,qs),pct=tM?Math.round(tot/tM*100):0,cls=pctCls(pct);
+  var te=document.getElementById('tot-'+si),pe=document.getElementById('pct-'+si);
+  if(te){te.textContent=tot+'/'+tM;te.className='g-total '+cls;}
+  if(pe){pe.textContent=pct+'%';pe.className=cls;}
+}
+function gradeKeyNav(e,si,qi){
+  var inp=e.target;
+  var qs=S.questions,nSt=S.classes[S.activeClass].students.length;
+  var next=null;
+  if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();next=(qi+1<qs.length)?[si,qi+1]:[si+1<nSt?si+1:0,0];}
+  else if(e.key==='Tab'&&e.shiftKey){e.preventDefault();next=(qi-1>=0)?[si,qi-1]:[si-1>=0?si-1:nSt-1,qs.length-1];}
+  else if(e.key==='Enter'||e.key==='ArrowDown'){e.preventDefault();next=[si+1<nSt?si+1:0,qi];}
+  else if(e.key==='ArrowUp'){e.preventDefault();next=[si-1>=0?si-1:nSt-1,qi];}
+  else if(e.key==='ArrowRight'&&inp.selectionStart===0){e.preventDefault();next=(qi-1>=0)?[si,qi-1]:null;}
+  else if(e.key==='ArrowLeft'&&inp.selectionEnd===inp.value.length){e.preventDefault();next=(qi+1<qs.length)?[si,qi+1]:null;}
+  if(next){var sel=document.querySelector('.g-inp[data-si="'+next[0]+'"][data-qi="'+next[1]+'"]');if(sel){sel.focus();sel.select();}}
+}
+function onPaste(e,si0,qi0){
+  var txt=(e.clipboardData||window.clipboardData).getData('text');if(!txt)return;
+  var lines=txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  if(lines.length<=1&&txt.indexOf('\t')===-1)return;
+  e.preventDefault();
+  var cls=S.classes[S.activeClass],qs=S.questions,changed=0;
+  lines.map(function(l){return l.split('\t');}).forEach(function(cols,ri){
+    var si=si0+ri;if(si>=cls.students.length)return;
+    cols.forEach(function(cell,ci){
+      var qi=qi0+ci;if(qi>=qs.length)return;
+      var v=parseFloat(cell.replace(',','.'));if(isNaN(v)||v<0)v=0;if(v>qs[qi].maxMark)v=qs[qi].maxMark;
+      cls.students[si].grades['q'+qi]=v;changed++;
+    });
+  });
+  if(changed){renderGrades();toast(T('pastedN').replace('{n}',changed),'s',2500);}
+}
+
+/* ════════════════════════════════════════
+   INSIGHTS ENGINE
+════════════════════════════════════════ */
+function genInsights(allSts,qs,ks,avgPct,tM){
+  var ins=[],recs=[];
+  if(avgPct>=80)ins.push({i:'🌟',t:T('overallHi')});
+  else if(avgPct>=60)ins.push({i:'📈',t:T('overallMd')});
+  else ins.push({i:'⚠️',t:T('overallLo')});
+  var weak=[],strong=[];
+  S.skills.forEach(function(sk,si){
+    var p=skillPct(allSts,qs,si);if(p===null)return;
+    if(p>=80)strong.push({s:sk,p:p});else if(p<60)weak.push({s:sk,p:p});
+  });
+  strong.slice(0,2).forEach(function(x){ins.push({i:'✅',t:T('skHi').replace('{s}',x.s).replace('{p}',x.p)});});
+  weak.slice(0,2).forEach(function(x){ins.push({i:'🔴',t:T('skLo').replace('{s}',x.s).replace('{p}',x.p)});});
+  if(ks.length>1){
+    var avgs=ks.map(function(k){
+      var sc=S.classes[k].students.map(function(st){return getTotal(st,qs);});
+      var a=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length/tM*100):0;
+      return{k:k,a:a};
+    }).sort(function(a,b){return b.a-a.a;});
+    ins.push({i:'🏆',t:T('clTop').replace('{c}',avgs[0].k).replace('{p}',avgs[0].a)});
+    if(avgs[avgs.length-1].a<60)ins.push({i:'📌',t:T('clLo').replace('{c}',avgs[avgs.length-1].k).replace('{p}',avgs[avgs.length-1].a)});
+  }
+  if(weak.length)recs.push(T('rec1'));if(ks.length>1)recs.push(T('rec2'));
+  recs.push(T('rec3'));if(weak.length)recs.push(T('rec4'));recs.push(T('rec5'));
+  return{ins:ins,recs:recs};
+}
+
+/* ════════════════════════════════════════
+   ANALYSIS RENDER
+════════════════════════════════════════ */
+function renderChart(ks,qs,classesObj){
+  if(!ks.length||!qs.length)return'';
+  var catC=['#ff8c69','#f5c842','#5bb8f5','#2ecc8f'],catL=['0–40%','41–60%','61–80%','81–100%'];
+  var allBins={};ks.forEach(function(k){allBins[k]=getBins((classesObj||S.classes)[k].students,qs);});
+  var gMax=1;ks.forEach(function(k){allBins[k].forEach(function(v){if(v>gMax)gMax=v;});});
+  var H=160,h='<div style="display:flex;align-items:flex-end;gap:3px;padding:22px 4px 0 4px">';
+  for(var ci=0;ci<4;ci++){
+    h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;border-right:'+(ci<3?'1px dashed #e0f4ea':'none')+';padding:0 5px">';
+    h+='<div style="display:flex;align-items:flex-end;gap:3px;height:'+H+'px;width:100%;justify-content:center">';
+    ks.forEach(function(k,ki){
+      var cnt=allBins[k][ci],col=CC[ki%CC.length];
+      var bH=cnt>0?Math.max(Math.round(cnt/gMax*H),5):0,bW=Math.min(Math.floor(68/ks.length),28);
+      h+='<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:'+H+'px;width:'+bW+'px">';
+      if(cnt>0){h+='<span style="font-size:10px;font-weight:700;color:'+col+';margin-bottom:2px">'+cnt+'</span><div style="width:100%;height:'+bH+'px;background:'+col+';border-radius:4px 4px 0 0"></div>';}
+      else{h+='<span style="font-size:10px;color:#ccc;margin-bottom:2px">0</span><div style="width:100%;height:3px;background:#e8f5ee;border-radius:2px 2px 0 0"></div>';}
+      h+='</div>';
+    });
+    h+='</div><div style="font-size:11px;font-weight:700;color:'+catC[ci]+';margin-top:6px;text-align:center;padding:2px 6px;background:'+catC[ci]+'18;border-radius:5px;white-space:nowrap">'+catL[ci]+'</div></div>';
+  }
+  h+='</div><div style="border-top:2px solid #d4f0e4;margin:3px 4px 0"></div><div class="chart-leg">';
+  ks.forEach(function(k,ki){h+='<div class="leg-item"><div class="leg-dot" style="background:'+CC[ki%CC.length]+'"></div>'+k+'</div>';});
+  h+='</div>';return h;
+}
+
+function renderAnalysis(){
+  var el=document.getElementById('analysisContent');var ks=Object.keys(S.classes);
+  if(!ks.length||!S.questions.length){el.innerHTML='<div class="empty"><div style="font-size:34px">📊</div><p>'+T('noData')+'</p></div>';return;}
+  var html=buildAnalysisHTML(ks,S.questions,S.classes,S.skills);
+  el.innerHTML=html;
+}
+
+function buildAnalysisHTML(ks,qs,classesObj,skills){
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(classesObj[k].students);});
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var n=allSts.length,avg=n?Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10:0;
+  var avgPct=tM?Math.round(avg/tM*100):0;
+  /* save skills ref for genInsights */
+  var origSkills=S.skills;S.skills=skills;
+  var ins=genInsights(allSts,qs,ks,avgPct,tM);
+  S.skills=origSkills;
+  var skH=skills.map(function(sk,si){
+    var p=skillPct(allSts,qs,si);if(p===null)return'';
+    var col=p>=80?'#2ecc8f':p>=60?'#f5c842':'#ff8c69',tc=p>=80?'#1a8f63':p>=60?'#7a5e00':'#c04030';
+    return'<div class="bar-wrap"><span class="bar-lbl" style="color:'+tc+'">'+sk+'</span><div class="bar-track"><div class="bar-fill" style="width:'+p+'%;background:'+col+'"></div></div><span class="bar-pct" style="color:'+tc+'">'+p+'%</span></div>';
+  }).join('');
+  var clRows=ks.map(function(k,ki){
+    var col=CC[ki%CC.length],sts=classesObj[k].students;
+    var sc=sts.map(function(st){return getTotal(st,qs);});
+    var a2=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0;
+    var p=tM?Math.round(a2/tM*100):0,tc=p>=80?'#1a8f63':p>=60?'#7a5e00':'#c04030',bg=p>=80?'#e8faf3':p>=60?'#fffbea':'#fff0f5';
+    return'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+bg+';border-radius:11px;margin-bottom:8px;border:1px solid '+col+'44"><span style="font-size:13px;font-weight:700;color:'+col+'">'+k+' <span class="badge">'+sts.length+' '+T('stWord')+'</span></span><span style="font-size:13px;font-weight:700;color:'+tc+'">'+a2+'/'+tM+' ('+p+'%)</span></div>';
+  }).join('');
+  var insH=ins.ins.map(function(x){return'<div class="ins-item"><div class="ins-icon">'+x.i+'</div><div class="ins-text">'+x.t+'</div></div>';}).join('');
+  var recH=ins.recs.map(function(r,i){return'<div class="ins-item"><div class="ins-icon" style="background:#ffeaa0;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;color:#7a5e00">'+(i+1)+'</div><div class="ins-text"><b>'+r+'</b></div></div>';}).join('');
+  return '<div class="stats-grid">'
+    +'<div class="stat-card sc1"><div class="sl">'+T('statStudents')+'</div><div class="sv">'+n+'</div></div>'
+    +'<div class="stat-card sc2"><div class="sl">'+T('statAvg')+'</div><div class="sv">'+avg+'</div></div>'
+    +'<div class="stat-card sc3"><div class="sl">'+T('statPct')+'</div><div class="sv">'+avgPct+'%</div></div>'
+    +'<div class="stat-card sc4"><div class="sl">'+T('statCls')+'</div><div class="sv">'+ks.length+'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="card-title">'+T('distTitle')+'</div>'+renderChart(ks,qs,classesObj)+'</div>'
+    +'<div class="card"><div class="card-title">🎯 '+T('pdfSkills')+'</div>'+(skills.length?skH:'<p style="font-size:12px;color:#6b9980">'+T('noSkills')+'</p>')+'</div>'
+    +'<div class="card"><div class="card-title">🏫 '+T('pdfClasses')+'</div>'+clRows+'</div>'
+    +'<div class="card"><div class="ins-grid"><div class="ins-card blue"><div class="ins-title">'+T('insTitle')+'</div>'+insH+'</div><div class="ins-card amber"><div class="ins-title">'+T('recTitle')+'</div>'+recH+'</div></div></div>';
+}
+
+/* ════════════════════════════════════════
+   ADMIN PANEL
+════════════════════════════════════════ */
+function buildAdminFilters(){
+  var sessions=loadAllSessions();
+  var teachers=[...new Set(sessions.map(function(s){return s.teacherName;}))].filter(Boolean);
+  var years=[...new Set(sessions.map(function(s){return s.year;}))].filter(Boolean);
+  var sems=[...new Set(sessions.map(function(s){return s.semester;}))].filter(Boolean);
+  var subjects=[...new Set(sessions.map(function(s){return s.subject;}))].filter(Boolean);
+  var classes=[...new Set(sessions.flatMap(function(s){return Object.keys(s.classes||{});}))];
+
+  function fillSel(id,arr,label){
+    var el=document.getElementById(id);
+    el.innerHTML='<option value="">'+label+'</option>';
+    arr.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
+  }
+  fillSel('af-teacher',teachers,'كل المعلمين');
+  fillSel('af-year',years,'كل السنوات');
+  fillSel('af-sem',sems,'كل الفصول');
+
+  function fillMulti(id,arr){
+    var el=document.getElementById(id);el.innerHTML='';
+    if(!arr.length){el.innerHTML='<p style="font-size:12px;color:#6b9980;padding:4px 8px">لا بيانات</p>';return;}
+    arr.forEach(function(v,i){
+      var d=document.createElement('div');d.className='filter-check';
+      d.innerHTML='<input type="checkbox" id="fc_'+id+'_'+i+'" value="'+v+'" onchange="adminFilter()"/><label for="fc_'+id+'_'+i+'">'+v+'</label>';
+      el.appendChild(d);
+    });
+  }
+  fillMulti('af-subjects',subjects);
+  fillMulti('af-classes',classes);
+}
+
+function getChecked(id){
+  var checks=document.querySelectorAll('#'+id+' input[type=checkbox]:checked');
+  return Array.from(checks).map(function(c){return c.value;});
+}
+
+function adminFilter(){
+  var sessions=loadAllSessions();
+  if(!sessions.length){
+    document.getElementById('adminContent').innerHTML='<div class="empty-admin"><div style="font-size:36px">📭</div><p>لا توجد بيانات محفوظة بعد</p></div>';
+    return;
+  }
+  var fTeacher=document.getElementById('af-teacher').value;
+  var fYear=document.getElementById('af-year').value;
+  var fSem=document.getElementById('af-sem').value;
+  var fSubjects=getChecked('af-subjects');
+  var fClasses=getChecked('af-classes');
+
+  var filtered=sessions.filter(function(s){
+    if(fTeacher&&s.teacherName!==fTeacher)return false;
+    if(fYear&&s.year!==fYear)return false;
+    if(fSem&&s.semester!==fSem)return false;
+    if(fSubjects.length&&!fSubjects.includes(s.subject))return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    document.getElementById('adminContent').innerHTML='<div class="empty-admin"><div style="font-size:36px">🔍</div><p>لا توجد بيانات تطابق الفلاتر المحددة</p></div>';
+    return;
+  }
+
+  renderAdminContent(filtered,fClasses);
+}
+
+function renderAdminContent(sessions,fClasses){
+  var el=document.getElementById('adminContent');
+  /* Build combined view */
+  var html='';
+
+  /* Summary table of all sessions */
+  html+='<div class="card"><div class="card-title" style="color:#9b7fe8">📋 جميع الجلسات المحددة ('+sessions.length+')</div>';
+  html+='<div style="overflow-x:auto"><table class="rec-table"><thead><tr><th>المعلم</th><th>المادة</th><th>الصف</th><th>السنة</th><th>الفصل</th><th>عدد الطلاب</th><th>المتوسط %</th><th>آخر حفظ</th></tr></thead><tbody>';
+  sessions.forEach(function(s){
+    var ks=Object.keys(s.classes||{});
+    var qs=s.questions||[];
+    var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+    ks.forEach(function(k){
+      if(fClasses.length&&!fClasses.includes(k))return;
+      var sts=s.classes[k].students;
+      var sc=sts.map(function(st){return getTotal(st,qs);});
+      var avg=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length/tM*100):0;
+      html+='<tr><td>'+s.teacherName+'</td><td>'+s.subject+'</td><td>'+k+'</td><td>'+s.year+'</td><td>'+s.semester+'</td><td>'+sts.length+'</td><td><span class="pct-badge '+pctBadge(avg)+'">'+avg+'%</span></td><td style="font-size:11px;color:#6b9980">'+new Date(s.savedAt).toLocaleDateString('ar-SA')+'</td></tr>';
+    });
+  });
+  html+='</tbody></table></div></div>';
+
+  /* Combined analysis if multiple sessions selected */
+  /* Build a unified class set */
+  var combinedClasses={},combinedQs=[],combinedSkills=[];
+  sessions.forEach(function(s){
+    var ks=Object.keys(s.classes||{});
+    ks.forEach(function(k){
+      if(fClasses.length&&!fClasses.includes(k))return;
+      var key=s.teacherName+'_'+s.subject+'_'+k;
+      combinedClasses[key]={students:s.classes[k].students,_meta:{teacher:s.teacherName,subject:s.subject,cls:k}};
+    });
+    (s.questions||[]).forEach(function(q){if(!combinedQs.find(function(x){return x.text===q.text;}))combinedQs.push(JSON.parse(JSON.stringify(q)));});
+    (s.skills||[]).forEach(function(sk){if(!combinedSkills.includes(sk))combinedSkills.push(sk);});
+  });
+
+  var combinedKs=Object.keys(combinedClasses);
+  if(combinedKs.length&&combinedQs.length){
+    /* fix skill refs */
+    combinedQs.forEach(function(q){q.skill=combinedSkills.indexOf(combinedSkills[q.skill]||combinedSkills[0])||0;});
+    var origClasses=S.classes,origQs=S.questions,origSkills=S.skills;
+    S.classes=combinedClasses;S.questions=combinedQs;S.skills=combinedSkills;
+    html+='<div class="card"><div class="card-title" style="color:#9b7fe8">📊 التحليل المجمّع لكل الجلسات المحددة</div>';
+    html+=buildAnalysisHTML(combinedKs,combinedQs,combinedClasses,combinedSkills);
+    html+='</div>';
+    S.classes=origClasses;S.questions=origQs;S.skills=origSkills;
+  }
+
+  /* Per-session detail */
+  sessions.forEach(function(s){
+    var ks=Object.keys(s.classes||{}).filter(function(k){return!fClasses.length||fClasses.includes(k);});
+    if(!ks.length)return;
+    var qs=s.questions||[],skills=s.skills||[];
+    html+='<div class="card"><div class="card-title" style="color:#9b7fe8">👩‍🏫 '+s.teacherName+' — '+s.subject+' — '+s.semester+' '+s.year+'</div>';
+    var origC=S.classes,origQ=S.questions,origSk=S.skills;
+    S.classes=s.classes;S.questions=qs;S.skills=skills;
+    html+=buildAnalysisHTML(ks,qs,s.classes,skills);
+    S.classes=origC;S.questions=origQ;S.skills=origSk;
+    html+='</div>';
+  });
+
+  el.innerHTML=html;
+}
+
+function clearAllData(){
+  if(!confirm('⚠️ هل أنت متأكدة من مسح كل البيانات المحفوظة؟ لا يمكن التراجع.'))return;
+  localStorage.removeItem(SESSIONS_KEY);
+  toast('تم مسح كل البيانات','w',3000);
+  buildAdminFilters();adminFilter();
+}
+
+/* ADMIN export */
+function exportAdminPDF(){
+  document.getElementById('printArea').innerHTML=document.getElementById('adminContent').innerHTML;
+  setTimeout(function(){window.print();},350);
+  toast('جارٍ فتح الطباعة...','',1500);
+}
+function exportAdminExcel(){
+  var sessions=loadAllSessions();if(!sessions.length){toast(T('noData'),'w');return;}
+  var wb=XLSX.utils.book_new();
+  var hdr=['المعلم','المادة','الفصل','السنة','الصف','الطالب','المجموع','النسبة %','التقييم'];
+  var rows=[hdr];
+  sessions.forEach(function(s){
+    var qs=s.questions||[],tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+    Object.keys(s.classes||{}).forEach(function(k){
+      s.classes[k].students.forEach(function(st){
+        var tot=getTotal(st,qs),pct=tM?Math.round(tot/tM*100):0;
+        rows.push([s.teacherName,s.subject,s.semester,s.year,k,st.name,tot,pct+'%',evalStr(pct)]);
+      });
+    });
+  });
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:18},{wch:16},{wch:14},{wch:12},{wch:12},{wch:22},{wch:10},{wch:10},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws,'كل البيانات');
+  XLSX.writeFile(wb,'بصيرة_وبوصلة_المركزة_'+new Date().toLocaleDateString('ar-SA').replace(/\//g,'-')+'.xlsx');
+  toast('✅ Excel','s',2500);
+}
+
+/* ════════════════════════════════════════
+   PDF / EXCEL EXPORT (Teacher)
+════════════════════════════════════════ */
+function buildPrintHTML(aiSummary,opts){
+  var ks=Object.keys(S.classes),qs=S.questions;
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var teacher=gv('teacherName'),subject=gv('subject'),semester=gv('semester'),year=gv('year');
+  var now=new Date().toLocaleDateString('ar-SA');
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(S.classes[k].students);});
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var n=allSts.length,avg=n?Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10:0;
+  var avgPct=tM?Math.round(avg/tM*100):0;
+  var logo=document.querySelector('.hdr-logo');var logoSrc=logo?logo.src:'';
+  var origSk=S.skills;
+  var ins=genInsights(allSts,qs,ks,avgPct,tM);
+  if(!opts)opts={header:true,stats:true,chart:true,bloom:true,skills:true,classes:true,insights:true,grades:true,aisummary:true};
+  var h='<div class="pr-pg">';
+  h+='<div class="pr-hdr"><img class="pr-logo" src="'+logoSrc+'" onerror="this.style.display=\'none\'"/>';
+  h+='<div class="pr-htxt"><h1>'+T('pdfHdr')+'</h1><p>'+T('pdfSchool')+'</p><p>'+T('pdfSup')+'</p></div>';
+  h+='<div class="pr-coord">بإرشاد مركزة التقييم منى مصطفى</div></div>';
+  if(opts.header){
+    h+='<div class="pr-meta"><span>'+T('pdfTeacher')+': <b>'+teacher+'</b></span><span>'+T('pdfSubject')+': <b>'+subject+'</b></span><span>'+T('pdfSem')+': <b>'+semester+'</b></span><span>'+T('pdfDate')+': <b>'+now+'</b></span></div>';
+  }
+  if(opts.stats){
+    h+='<div class="pr-sec">'+T('pdfSummary')+'</div>';
+    h+='<div class="pr-stats"><div class="pr-stat"><div class="lbl">'+T('statStudents')+'</div><div class="val">'+n+'</div></div><div class="pr-stat"><div class="lbl">'+T('statAvg')+'</div><div class="val">'+avg+'</div></div><div class="pr-stat"><div class="lbl">max</div><div class="val">'+tM+'</div></div><div class="pr-stat"><div class="lbl">%</div><div class="val">'+avgPct+'%</div></div></div>';
+  }
+    if(opts.chart){
+  h+='<div class="pr-sec">📊 توزيع مستويات الطلاب</div>';
+  h+='<div style="margin:0 0 10px;border:1px solid #d4f0e4;border-radius:8px;padding:10px 8px;background:#f7fdf9;-webkit-print-color-adjust:exact;print-color-adjust:exact">';
+  h+=buildDistChartSVG(ks,qs,S.classes);
+  // جدول توزيع مصغّر
+  var bins=[0,0,0,0];
+  scores.forEach(function(s){var p=tM?s/tM*100:0;if(p<=40)bins[0]++;else if(p<=60)bins[1]++;else if(p<=80)bins[2]++;else bins[3]++;});
+  var bLabels=['ضعيف (0–40%)','متوسط (41–60%)','جيد (61–80%)','ممتاز (81–100%)'];
+  var bColors=['#ff6b6b','#f5c842','#5bb8f5','#2ecc8f'];
+  h+='<div style="display:flex;gap:6px;margin-top:8px;justify-content:center;flex-wrap:wrap">';
+  bins.forEach(function(b,i){
+    var pct=n?Math.round(b/n*100):0;
+    h+='<div style="text-align:center;padding:5px 10px;border-radius:7px;background:'+bColors[i]+'22;border:1px solid '+bColors[i]+'55;min-width:80px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+      +'<div style="font-size:7.5pt;color:'+bColors[i].replace('f5c842','b8960a')+'88;font-weight:700">'+bLabels[i]+'</div>'
+      +'<div style="font-size:13pt;font-weight:800;color:'+bColors[i].replace('f5c842','7a5e00')+'">'+b+'</div>'
+      +'<div style="font-size:7pt;color:#6b9980">'+pct+'% من الطلاب</div>'
+      +'</div>';
+  });
+  h+='</div></div>';
+  } /* end chart */
+
+  if(opts.bloom){
+  /* Bloom distribution in PDF */
+  var bloomCounts=[0,0,0,0,0,0];
+  qs.forEach(function(q){var b=(q.bloom||1)-1;if(b>=0&&b<6)bloomCounts[b]++;});
+  var hasBloom=bloomCounts.some(function(x){return x>0;});
+  if(hasBloom){
+    var sd2=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+    h+='<div class="pr-sec">🎓 توزيع مستويات بلوم المعرفية</div>';
+    h+='<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">';
+    BLOOM_LEVELS.forEach(function(b,i){
+      if(!bloomCounts[i])return;
+      var lbl=sd2.lang==='en'?b.en:sd2.lang==='he'?b.he:b.ar;
+      var bColors=['#fff0eb','#fffbea','#e8faf3','#eaf6ff','#f3efff','#fff0f8'];
+      var bTextColors=['#c05a30','#7a5e00','#1a8f63','#1a6fa5','#6344b8','#9b2060'];
+      h+='<div style="text-align:center;padding:6px 10px;border-radius:9px;background:'+bColors[i]+';min-width:70px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+        +'<div style="font-size:14pt">'+b.icon+'</div>'
+        +'<div style="font-size:8pt;font-weight:700;color:'+bTextColors[i]+'">'+lbl+'</div>'
+        +'<div style="font-size:13pt;font-weight:800;color:'+bTextColors[i]+'">'+bloomCounts[i]+'</div>'
+        +'</div>';
+    });
+    h+='</div>';
+    /* HOT/LOT ratio */
+    var lo=bloomCounts[0]+bloomCounts[1],hi=bloomCounts[4]+bloomCounts[5],tot=qs.length;
+    var hiPct=tot?Math.round(hi/tot*100):0,loPct=tot?Math.round(lo/tot*100):0;
+    h+='<div style="font-size:9pt;color:#4a7a60;background:#f0fbf6;border-radius:8px;padding:7px 12px;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+      +'مستويات عليا (تقييم+تركيب): <b>'+hiPct+'%</b> | مستويات دنيا (تذكر+فهم): <b>'+loPct+'%</b>'
+      +(loPct>70?' — ⚠️ الامتحان يركز على التذكر والفهم، يُنصح بتنويع المستويات':'')
+      +'</div>';
+  } /* end hasBloom */
+  } /* end opts.bloom */
+  if(opts.skills&&S.skills.length){
+    h+='<div class="pr-sec">'+T('pdfSkills')+'</div>';
+    S.skills.forEach(function(sk,si){var p=skillPct(allSts,qs,si);if(p===null)return;var col=p>=80?'#2ecc8f':p>=60?'#f5c842':'#ff8c69',tc=p>=80?'#1a8f63':p>=60?'#7a5e00':'#c04030';h+='<div class="pr-sk"><span class="pr-sk-n">'+sk+'</span><div class="pr-sk-t"><div class="pr-sk-f" style="width:'+p+'%;background:'+col+'"></div></div><span class="pr-sk-p" style="color:'+tc+'">'+p+'%</span></div>';});
+  }
+  if(opts.classes){
+  h+='<div class="pr-sec">'+T('pdfClasses')+'</div>';
+  h+='<table class="pr-tbl"><thead><tr><th>'+T('clWord')+'</th><th>'+T('stWord')+'</th><th>avg</th><th>%</th><th>'+T('pdfEval')+'</th></tr></thead><tbody>';
+  ks.forEach(function(k){var sts=S.classes[k].students,sc=sts.map(function(st){return getTotal(st,qs);});var a2=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0;var p=tM?Math.round(a2/tM*100):0;h+='<tr><td>'+k+'</td><td>'+sts.length+'</td><td>'+a2+'/'+tM+'</td><td class="'+pctCls(p)+'">'+p+'%</td><td>'+evalStr(p)+'</td></tr>';});
+  h+='</tbody></table>';
+  } /* end opts.classes */
+  if(opts.insights){
+  h+='<div class="pr-sec">'+T('pdfIns')+'</div><div class="pr-ins-grid"><div class="pr-ins-b b"><div class="pr-ins-t">💡 '+T('pdfInsLbl')+'</div>';
+  ins.ins.forEach(function(x){h+='<div class="pr-ins-i">'+x.i+' '+x.t+'</div>';});
+  h+='</div><div class="pr-ins-b a"><div class="pr-ins-t">📋 '+T('pdfRecLbl')+'</div>';
+  ins.recs.forEach(function(r){h+='<div class="pr-ins-i">'+r+'</div>';});
+  h+='</div></div>';
+  } /* end opts.insights */
+
+  // ── الملخص العام بالذكاء الاصطناعي ──
+  if(opts.aisummary&&aiSummary){
+    h+='<div class="pr-sec" style="margin-top:14px">🤖 الملخص العام للأداء</div>';
+    h+='<div style="background:linear-gradient(135deg,#e8faf3,#eaf6ff);border:1px solid #b8e8d4;border-radius:9px;padding:12px 15px;font-size:9.5pt;color:#1a2e22;line-height:1.8;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+      +'<div style="font-size:8pt;color:#1a8f63;font-weight:700;margin-bottom:5px">✨ تحليل ذكي — مركزة التقييم: بصيرة وبوصلة</div>'
+      +aiSummary
+      +'</div>';
+  }
+
+  h+='<div class="pr-foot">'+T('pdfFoot')+' | '+now+'</div></div>';
+  if(opts.grades){
+  ks.forEach(function(k){
+    var cls=S.classes[k];h+='<div class="pr-pg">';
+    h+='<div class="pr-hdr"><img class="pr-logo" src="'+logoSrc+'" onerror="this.style.display=\'none\'"/><div class="pr-htxt"><h1>'+T('pdfGrades')+k+'</h1><p>'+subject+' | '+teacher+'</p></div><div class="pr-coord">بإرشاد مركزة التقييم منى مصطفى</div></div>';
+    h+='<table class="pr-tbl"><thead><tr><th style="text-align:right">'+T('pdfStName')+'</th>';
+    qs.forEach(function(q,i){h+='<th>Q'+(i+1)+'/'+q.maxMark+'</th>';});
+    h+='<th>'+T('pdfTotal')+'</th><th>%</th><th>'+T('pdfEval')+'</th></tr></thead><tbody>';
+    cls.students.forEach(function(st){var tot=getTotal(st,qs),p=tM?Math.round(tot/tM*100):0;h+='<tr><td>'+st.name+'</td>';qs.forEach(function(q,qi){var v=st.grades['q'+qi];h+='<td>'+(v!==undefined&&v!==''?v:'—')+'</td>';});h+='<td><b>'+tot+'</b></td><td class="'+pctCls(p)+'">'+p+'%</td><td>'+evalStr(p)+'</td></tr>';});
+    h+='</tbody></table>';
+    if(S.skills.length){h+='<div class="pr-sec" style="font-size:9.5pt">'+T('pdfClSkills')+'</div>';S.skills.forEach(function(sk,si){var p=skillPct(cls.students,qs,si);if(p===null)return;var col=p>=80?'#2ecc8f':p>=60?'#f5c842':'#ff8c69',tc=p>=80?'#1a8f63':p>=60?'#7a5e00':'#c04030';h+='<div class="pr-sk"><span class="pr-sk-n">'+sk+'</span><div class="pr-sk-t"><div class="pr-sk-f" style="width:'+p+'%;background:'+col+'"></div></div><span class="pr-sk-p" style="color:'+tc+'">'+p+'%</span></div>';});}
+    h+='<div class="pr-foot">'+k+' | '+now+'</div></div>';
+  });
+  } /* end opts.grades */
+  return h;
+}
+
+/* ════════════════════════════════════════
+   PDF OPTIONS MODAL
+════════════════════════════════════════ */
+var pdfOpts={header:true,stats:true,chart:true,bloom:true,skills:true,classes:true,insights:true,grades:true,aisummary:true};
+
+function exportPDF(){
+  var ks=Object.keys(S.classes);
+  if(!ks.length||!S.questions.length){toast(T('noData'),'w');return;}
+  /* reset checkboxes to saved state */
+  Object.keys(pdfOpts).forEach(function(k){
+    var el=document.getElementById('pdfopt-'+k);
+    if(el){
+      if(pdfOpts[k])el.classList.add('checked');
+      else el.classList.remove('checked');
+    }
+  });
+  document.getElementById('pdfOptionsModal').classList.add('open');
+}
+
+function togglePdfOpt(el,key){
+  el.classList.toggle('checked');
+  pdfOpts[key]=el.classList.contains('checked');
+  /* if aisummary unchecked, show instant note */
+  var note=document.querySelector('.pdf-ai-note');
+  if(note){
+    note.style.opacity=pdfOpts.aisummary?'1':'0.5';
+  }
+}
+
+function selectAllPdfOpts(val){
+  Object.keys(pdfOpts).forEach(function(k){
+    pdfOpts[k]=val;
+    var el=document.getElementById('pdfopt-'+k);
+    if(el){if(val)el.classList.add('checked');else el.classList.remove('checked');}
+  });
+}
+
+function closePdfModal(){
+  document.getElementById('pdfOptionsModal').classList.remove('open');
+}
+
+
+/* ════════════════════════════════════════
+   WORD EXPORT — تصدير ملف Word
+════════════════════════════════════════ */
+/* ════════════════════════════════════════
+   WORD EXPORT — بدون مكتبات خارجية (XML مباشر)
+════════════════════════════════════════ */
+async function generateWord(){
+  closePdfModal();
+  var ks=Object.keys(S.classes);
+  if(!ks.length||!S.questions.length){toast(T('noData'),'w');return;}
+
+  var subject=gv('subject')||'تقرير';
+  var teacher=gv('teacherName')||'';
+  var semester=gv('semester')||'';
+  var year=gv('year')||'';
+  var now=new Date().toLocaleDateString('ar-SA');
+  var qs=S.questions;
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(S.classes[k].students);});
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var n=allSts.length;
+  var avg=n?Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10:0;
+  var avgPct=tM?Math.round(avg/tM*100):0;
+  var ins=genInsights(allSts,qs,ks,avgPct,tM);
+
+  var aiSummary='';
+  if(pdfOpts.aisummary){
+    toast('⏳ جارٍ تجهيز الملخص الذكي...','s',4000);
+    aiSummary=await buildAISummary(ks,qs,S.classes,S.skills);
+  }
+  toast('⏳ جارٍ إنشاء ملف Word...','s',3000);
+
+  try{
+    /* ── XML helpers ── */
+    function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+    function wRun(text,opts){
+      opts=opts||{};
+      var rPr='';
+      if(opts.bold)rPr+='<w:b/>';
+      if(opts.size)rPr+='<w:sz w:val="'+opts.size+'"/><w:szCs w:val="'+opts.size+'"/>';
+      if(opts.color)rPr+='<w:color w:val="'+opts.color+'"/>';
+      if(opts.font)rPr+='<w:rFonts w:ascii="'+opts.font+'" w:hAnsi="'+opts.font+'" w:cs="'+opts.font+'"/>';
+      if(opts.rtl)rPr+='<w:rtl/>';
+      return '<w:r>'+(rPr?'<w:rPr>'+rPr+'</w:rPr>':'')+'<w:t xml:space="preserve">'+esc(text)+'</w:t></w:r>';
+    }
+
+    function wPara(runs,pOpts){
+      pOpts=pOpts||{};
+      var pPr='';
+      if(pOpts.jc)pPr+='<w:jc w:val="'+pOpts.jc+'"/>';
+      if(pOpts.rtl)pPr+='<w:bidi/>';
+      if(pOpts.before||pOpts.after)pPr+='<w:spacing w:before="'+(pOpts.before||0)+'" w:after="'+(pOpts.after||0)+'"/>';
+      if(pOpts.style)pPr='<w:pStyle w:val="'+pOpts.style+'"/>'+pPr;
+      if(pOpts.shade)pPr+='<w:shd w:fill="'+pOpts.shade+'" w:val="clear"/>';
+      if(pOpts.border)pPr+='<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="2ECC8F"/></w:pBdr>';
+      return '<w:p>'+(pPr?'<w:pPr>'+pPr+'</w:pPr>':'')+runs+'</w:p>';
+    }
+
+    function heading(txt,level){
+      var col=level===1?'1A8F63':'1A2E22';
+      var sz=level===1?32:26;
+      var run=wRun(txt,{bold:true,size:sz,color:col,font:'Arial',rtl:true});
+      var border=level===1?'<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="2ECC8F"/></w:pBdr>':'';
+      return '<w:p><w:pPr><w:jc w:val="right"/><w:bidi/><w:spacing w:before="280" w:after="120"/>'+border+'</w:pPr>'+run+'</w:p>';
+    }
+
+    function textPara(txt,color,sz,bold,shade){
+      var run=wRun(txt,{size:sz||22,color:color||'1A2E22',bold:bold,font:'Arial',rtl:true});
+      var shd=shade?'<w:shd w:fill="'+shade+'" w:val="clear"/>':'';
+      return '<w:p><w:pPr><w:jc w:val="right"/><w:bidi/>'+shd+'<w:spacing w:before="60" w:after="60"/></w:pPr>'+run+'</w:p>';
+    }
+
+    function spacer(){return '<w:p><w:pPr><w:spacing w:before="80" w:after="80"/></w:pPr></w:p>';}
+
+    function pageBreak(){return '<w:p><w:pPr><w:pageBreakBefore/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>';}
+
+    function makeTable(headers,rows,colWidths){
+      var W=colWidths.reduce(function(a,b){return a+b;},0);
+      var colsXml=colWidths.map(function(w){return'<w:col w:w="'+w+'"/>';}).join('');
+      var xml='<w:tbl><w:tblPr>'
+        +'<w:tblW w:w="'+W+'" w:type="dxa"/>'
+        +'<w:tblBorders>'
+        +'<w:top w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'<w:left w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'<w:bottom w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'<w:right w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'<w:insideH w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'<w:insideV w:val="single" w:sz="4" w:color="D4F0E4"/>'
+        +'</w:tblBorders>'
+        +'</w:tblPr>'
+        +'<w:tblGrid>'+colsXml+'</w:tblGrid>';
+      /* header row */
+      xml+='<w:tr><w:trPr><w:tblHeader/></w:trPr>';
+      headers.forEach(function(h,i){
+        xml+='<w:tc>'
+          +'<w:tcPr><w:tcW w:w="'+colWidths[i]+'" w:type="dxa"/><w:shd w:fill="E8FAF3" w:val="clear"/>'
+          +'<w:tcMar><w:top w:w="80" w:type="dxa"/><w:bottom w:w="80" w:type="dxa"/><w:left w:w="120" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tcMar>'
+          +'</w:tcPr>'
+          +'<w:p><w:pPr><w:jc w:val="center"/></w:pPr>'
+          +wRun(h,{bold:true,size:18,color:'1A8F63',font:'Arial'})+'</w:p></w:tc>';
+      });
+      xml+='</w:tr>';
+      /* data rows */
+      rows.forEach(function(row,ri){
+        var bg=ri%2===0?'FFFFFF':'F0FBF6';
+        xml+='<w:tr>';
+        row.forEach(function(cell,ci){
+          var isFirst=ci===0;
+          xml+='<w:tc>'
+            +'<w:tcPr><w:tcW w:w="'+colWidths[ci]+'" w:type="dxa"/><w:shd w:fill="'+bg+'" w:val="clear"/>'
+            +'<w:tcMar><w:top w:w="70" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:left w:w="120" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tcMar>'
+            +'</w:tcPr>'
+            +'<w:p><w:pPr><w:jc w:val="'+(isFirst?'right':'center')+'"/>'+(isFirst?'<w:bidi/>':'')+'</w:pPr>'
+            +wRun(String(cell||'—'),{size:19,bold:isFirst,font:'Arial',rtl:isFirst,color:'1A2E22'})
+            +'</w:p></w:tc>';
+        });
+        xml+='</w:tr>';
+      });
+      xml+='</w:tbl>';
+      return xml;
+    }
+
+    /* ── Build body XML ── */
+    var body='';
+
+    /* Cover */
+    body+=textPara('تقرير التقييم','1A8F63',48,true,'');
+    body+=textPara('منصة التقييم الذكي: بصيرة وبوصلة','6B9980',24,false,'');
+    body+=textPara('بإرشاد مركزة التقييم منى مصطفى','6B9980',20,false,'');
+    body+=spacer();
+
+    /* معلومات المسح */
+    if(pdfOpts.header){
+      body+=heading('📋 معلومات المسح',1);
+      var infoRows=[];
+      if(teacher)infoRows.push(['المعلم',teacher]);
+      if(subject)infoRows.push(['المادة',subject]);
+      if(semester)infoRows.push(['الفصل',semester]);
+      if(year)infoRows.push(['السنة',year]);
+      infoRows.push(['التاريخ',now]);
+      body+=makeTable(['البند','القيمة'],infoRows,[3000,6000]);
+      body+=spacer();
+    }
+
+    /* الإحصاءات */
+    if(pdfOpts.stats){
+      body+=heading('📊 الإحصاءات العامة',1);
+      var bins=[0,0,0,0];
+      scores.forEach(function(s){var p=tM?s/tM*100:0;if(p<=40)bins[0]++;else if(p<=60)bins[1]++;else if(p<=80)bins[2]++;else bins[3]++;});
+      body+=makeTable(
+        ['عدد الطلاب','المتوسط','العلامة الكاملة','النسبة','ضعيف','متوسط','جيد','ممتاز'],
+        [[n,avg,tM,avgPct+'%',bins[0],bins[1],bins[2],bins[3]]],
+        [1150,1000,1200,1000,900,900,900,950]
+      );
+      body+=spacer();
+    }
+
+    /* بلوم */
+    if(pdfOpts.bloom){
+      var bC=[0,0,0,0,0,0];
+      qs.forEach(function(q){var b=(q.bloom||1)-1;if(b>=0&&b<6)bC[b]++;});
+      if(bC.some(function(x){return x>0;})){
+        var sd2=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+        body+=heading('🎓 توزيع مستويات بلوم',1);
+        var bHdrs=BLOOM_LEVELS.map(function(b){return b.icon+' '+(sd2.lang==='en'?b.en:sd2.lang==='he'?b.he:b.ar);});
+        body+=makeTable(bHdrs,[bC.map(String)],BLOOM_LEVELS.map(function(){return Math.floor(9000/6);}));
+        var lo=bC[0]+bC[1],hi=bC[4]+bC[5],tot2=qs.length;
+        var hiP=tot2?Math.round(hi/tot2*100):0,loP=tot2?Math.round(lo/tot2*100):0;
+        body+=textPara('مستويات عليا: '+hiP+'% | مستويات دنيا: '+loP+'%','1A8F63',20,false,'E8FAF3');
+        if(loP>70)body+=textPara('⚠️ الامتحان يركز على التذكر والفهم — يُنصح بتنويع المستويات','C05A30',20,false,'');
+        body+=spacer();
+      }
+    }
+
+    /* المهارات */
+    if(pdfOpts.skills&&S.skills.length){
+      body+=heading('🎯 أداء المهارات',1);
+      var skRows=S.skills.map(function(sk,si){
+        var p=skillPct(allSts,qs,si);
+        return[sk,p!==null?p+'%':'—',p!==null?evalStr(p):'—'];
+      });
+      body+=makeTable(['المهارة','النسبة','التقييم'],skRows,[5000,2000,2000]);
+      body+=spacer();
+    }
+
+    /* الصفوف */
+    if(pdfOpts.classes){
+      body+=heading('🏛️ ملخص الصفوف',1);
+      var clsRows=ks.map(function(k){
+        var sts=S.classes[k].students,sc=sts.map(function(st){return getTotal(st,qs);});
+        var a2=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0;
+        var p=tM?Math.round(a2/tM*100):0;
+        return[k,sts.length,a2+'/'+tM,p+'%',evalStr(p)];
+      });
+      body+=makeTable(['الصف','الطلاب','المتوسط','النسبة','التقييم'],clsRows,[2200,1500,1800,1600,1900]);
+      body+=spacer();
+    }
+
+    /* التحليل والتوصيات */
+    if(pdfOpts.insights){
+      body+=heading('💡 التحليل والتوصيات',1);
+      body+=heading('الملاحظات',2);
+      ins.ins.forEach(function(x){body+=textPara(x.i+' '+x.t,'1A2E22',20,false,'');});
+      body+=spacer();
+      body+=heading('خطة العمل',2);
+      ins.recs.forEach(function(r,i){body+=textPara((i+1)+'. '+r,'1A2E22',20,false,'');});
+      body+=spacer();
+    }
+
+    /* الملخص الذكي */
+    if(pdfOpts.aisummary&&aiSummary){
+      body+=heading('🤖 الملخص الذكي للأداء',1);
+      body+=textPara(aiSummary,'1A2E22',22,false,'E8FAF3');
+      body+=textPara('✨ تحليل ذكي — منصة بصيرة وبوصلة','1A8F63',18,false,'');
+      body+=spacer();
+    }
+
+    /* جداول علامات الطلاب */
+    if(pdfOpts.grades){
+      ks.forEach(function(k){
+        body+=pageBreak();
+        body+=heading('📝 جدول علامات — '+k,1);
+        body+=textPara('المادة: '+subject+' | المعلم: '+teacher+' | '+semester,'6B9980',20,false,'');
+        body+=spacer();
+        var cls=S.classes[k];
+        var gHdrs=['اسم الطالب'];
+        qs.forEach(function(q,i){gHdrs.push('س'+(i+1)+'/'+q.maxMark);});
+        gHdrs.push('المجموع','%','التقييم');
+        var nameW=2400,totW=900,pctW=700,evW=1100;
+        var qW=Math.max(500,Math.floor((9000-nameW-totW-pctW-evW)/Math.max(qs.length,1)));
+        var gCols=[nameW].concat(qs.map(function(){return qW;})).concat([totW,pctW,evW]);
+        var sumW=gCols.reduce(function(a,b){return a+b;},0);
+        if(sumW>9000){var sc2=9000/sumW;gCols=gCols.map(function(w){return Math.floor(w*sc2);});}
+        var gRows=cls.students.map(function(st){
+          var tot2=getTotal(st,qs),p=tM?Math.round(tot2/tM*100):0;
+          var row=[st.name];
+          qs.forEach(function(q,qi){var v=st.grades['q'+qi];row.push(v!==undefined&&v!==''?String(v):'—');});
+          row.push(String(tot2),p+'%',evalStr(p));
+          return row;
+        });
+        body+=makeTable(gHdrs,gRows,gCols);
+        if(S.skills.length){
+          body+=spacer();
+          body+=heading('أداء مهارات الصف',2);
+          var clSkRows=S.skills.map(function(sk,si){
+            var p=skillPct(cls.students,qs,si);
+            return[sk,p!==null?p+'%':'—',p!==null?evalStr(p):'—'];
+          });
+          body+=makeTable(['المهارة','النسبة','التقييم'],clSkRows,[5000,2000,2000]);
+        }
+        body+=spacer();
+      });
+    }
+
+    /* ── بناء ملف DOCX (ZIP) يدوياً ── */
+    var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"'
+      +' xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"'
+      +' xmlns:o="urn:schemas-microsoft-com:office:office"'
+      +' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
+      +' xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"'
+      +' xmlns:v="urn:schemas-microsoft-com:vml"'
+      +' xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"'
+      +' xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"'
+      +' xmlns:w10="urn:schemas-microsoft-com:office:word"'
+      +' xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+      +' xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"'
+      +' xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"'
+      +' xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk"'
+      +' xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"'
+      +' xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 wp14">'
+      +'<w:body>'
+      +body
+      +'<w:sectPr>'
+      +'<w:pgSz w:w="11906" w:h="16838"/>'
+      +'<w:pgMar w:top="1000" w:right="1000" w:bottom="1000" w:left="1000"/>'
+      +'<w:bidi/>'
+      +'</w:sectPr>'
+      +'</w:body></w:document>';
+
+    var relsXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+      +'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+      +'</Relationships>';
+
+    var stylesXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+      +'<w:docDefaults><w:rPrDefault><w:rPr>'
+      +'<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>'
+      +'<w:sz w:val="22"/><w:szCs w:val="22"/>'
+      +'</w:rPr></w:rPrDefault></w:docDefaults>'
+      +'</w:styles>';
+
+    var settingsXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+      +'<w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat>'
+      +'</w:settings>';
+
+    var contentTypesXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+      +'<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+      +'<Default Extension="xml" ContentType="application/xml"/>'
+      +'<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+      +'<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+      +'<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>'
+      +'</Types>';
+
+    var rootRelsXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      +'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+      +'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
+      +'</Relationships>';
+
+    /* ── تجميع ZIP باستخدام JSZip ── */
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    var zip=new JSZip();
+    zip.file('[Content_Types].xml', contentTypesXml);
+    zip.file('_rels/.rels', rootRelsXml);
+    zip.file('word/document.xml', docXml);
+    zip.file('word/styles.xml', stylesXml);
+    zip.file('word/settings.xml', settingsXml);
+    zip.file('word/_rels/document.xml.rels', relsXml);
+
+    var blob=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='تقرير_'+subject+'_'+(year||'2025')+'.docx';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},3000);
+    toast('✅ تم تنزيل ملف Word — افتحه وعدّل كما تشاء!','s',5000);
+
+  }catch(err){
+    console.error('Word export error:',err);
+    toast('⚠️ تعذّر إنشاء ملف Word: '+err.message,'e',5000);
+  }
+}
+
+
+async function generatePDF(){
+  closePdfModal();
+  var ks=Object.keys(S.classes);
+  var subject=gv('subject')||'تقرير';
+  var year=gv('year')||'2025';
+  var aiSummary='';
+  if(pdfOpts.aisummary){
+    toast('⏳ جارٍ تجهيز الملخص الذكي...','s',4000);
+    aiSummary=await buildAISummary(ks,S.questions,S.classes,S.skills);
+  }
+  var fullHTML='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/>'
+    +'<title>تقرير التقييم — '+subject+'</title>'
+    +'<style>'+getPrintCSS()+'</style></head><body>'
+    +buildPrintHTML(aiSummary,pdfOpts)
+    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'</body></html>';
+  var blob=new Blob([fullHTML],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='تقرير_'+subject+'_'+year+'.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},3000);
+  toast('📄 تم تنزيل التقرير — افتحه واضغط Ctrl+P للطباعة أو حفظ PDF','s',5000);
+}
+
+function getPrintCSS(){
+  return '@page{size:A4 portrait;margin:12mm 10mm}'
+  +'*{box-sizing:border-box;margin:0;padding:0}'
+  +'body{font-family:"Segoe UI",Tahoma,"Arial Unicode MS",Arial,sans-serif;direction:rtl;font-size:11pt;color:#111;background:#fff}'
+  +'.pr-pg{page-break-after:always;padding:0}.pr-pg:last-child{page-break-after:avoid}'
+  +'.pr-hdr{background:#2ecc8f;border-radius:9px;padding:11px 15px;display:flex;align-items:center;gap:11px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-logo{width:52px;height:52px;border-radius:9px;object-fit:cover;border:2px solid rgba(255,255,255,.5);flex-shrink:0}'
+  +'.pr-htxt{flex:1}.pr-htxt h1{font-size:14pt;font-weight:800;color:#fff;margin:0 0 2px}'
+  +'.pr-htxt p{font-size:10pt;color:rgba(255,255,255,.9);margin:1px 0;font-weight:600}'
+  +'.pr-coord{margin-right:auto;background:rgba(255,255,255,.22);border-radius:7px;padding:5px 11px;font-size:9.5pt;font-weight:800;color:#fff;border:1.5px solid rgba(255,255,255,.5);white-space:nowrap;text-align:center;align-self:center}'
+  +'.pr-meta{display:flex;gap:12px;font-size:9pt;background:#e8faf3;border-radius:7px;padding:6px 12px;margin-bottom:11px;flex-wrap:wrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-meta span{color:#1a8f63;font-weight:600}.pr-meta b{color:#1a2e22}'
+  +'.pr-sec{font-size:11pt;font-weight:800;color:#1a8f63;border-bottom:2px solid #2ecc8f;padding-bottom:3px;margin:12px 0 7px}'
+  +'.pr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}'
+  +'.pr-stat{background:#e8faf3;border-radius:7px;padding:7px;text-align:center;border:1px solid #b8e8d4;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-stat .lbl{font-size:8pt;color:#1a8f63;font-weight:700;margin-bottom:2px}.pr-stat .val{font-size:14pt;font-weight:800;color:#1a8f63}'
+  +'.pr-tbl{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:9px}'
+  +'.pr-tbl th{background:#2ecc8f;color:#fff;padding:5px 7px;text-align:center;font-weight:700;border:1px solid #1a8f63;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-tbl th:first-child{text-align:right}'
+  +'.pr-tbl td{padding:4px 7px;border:1px solid #d4f0e4;text-align:center}'
+  +'.pr-tbl td:first-child{text-align:right;font-weight:600}'
+  +'.pr-tbl tr:nth-child(even) td{background:#f0fbf6;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.ph{color:#1a8f63;font-weight:700}.pm{color:#7a5e00;font-weight:700}.pl{color:#c04030;font-weight:700}'
+  +'.pr-sk{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:9pt}'
+  +'.pr-sk-n{width:110px;font-weight:600}'
+  +'.pr-sk-t{flex:1;height:9px;background:#e8faf3;border-radius:4px;overflow:hidden;border:1px solid #b8e8d4}'
+  +'.pr-sk-f{height:100%;border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-sk-p{width:34px;font-weight:700;text-align:right}'
+  +'.pr-ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:5px}'
+  +'.pr-ins-b{border-radius:7px;padding:9px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  +'.pr-ins-b.b{background:#eaf6ff;border:1px solid #b8d8f4}'
+  +'.pr-ins-b.a{background:#fffbea;border:1px solid #f5d87a}'
+  +'.pr-ins-t{font-size:9.5pt;font-weight:800;margin-bottom:6px}'
+  +'.pr-ins-b.b .pr-ins-t{color:#1a6fa5}.pr-ins-b.a .pr-ins-t{color:#7a5e00}'
+  +'.pr-ins-i{font-size:8pt;color:#1a2e22;margin-bottom:4px;line-height:1.5;padding-right:10px;position:relative}'
+  +'.pr-ins-i::before{content:"\\2022";position:absolute;right:0}'
+  +'.pr-ins-b.b .pr-ins-i::before{color:#5bb8f5}.pr-ins-b.a .pr-ins-i::before{color:#f5c842}'
+  +'.pr-foot{font-size:8pt;color:#6b9980;text-align:center;margin-top:12px;padding-top:7px;border-top:1px solid #d4f0e4}';
+}
+
+/* ════════════════════════════════════════
+   PDF CHART — SVG توزيع العلامات
+════════════════════════════════════════ */
+function buildDistChartSVG(ks, qs, classesObj){
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  if(!tM)return'';
+
+  // شرائح النسب المئوية
+  var labels=['0–40%','41–60%','61–80%','81–100%'];
+  var colors=['#ff6b6b','#f5c842','#5bb8f5','#2ecc8f'];
+  var darkColors=['#c04030','#b8960a','#1a6fa5','#1a8f63'];
+
+  // جمع بيانات كل صف
+  var classData=ks.map(function(k,ki){
+    var bins=[0,0,0,0];
+    (classesObj[k].students||[]).forEach(function(st){
+      var p=tM?getTotal(st,qs)/tM*100:0;
+      if(p<=40)bins[0]++;else if(p<=60)bins[1]++;else if(p<=80)bins[2]++;else bins[3]++;
+    });
+    return{name:k,bins:bins,color:['#2ecc8f','#5bb8f5','#9b7fe8','#ff8c69','#f5c842','#ff6b9d'][ki%6]};
+  });
+
+  var W=520,H=220,padL=40,padB=30,padT=20,padR=10;
+  var chartW=W-padL-padR,chartH=H-padB-padT;
+  var groupCount=4,barGroupW=chartW/groupCount;
+  var barW=Math.min(Math.floor(barGroupW*0.7/ks.length),28);
+  var maxVal=1;
+  classData.forEach(function(cd){cd.bins.forEach(function(v){if(v>maxVal)maxVal=v;});});
+
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" style="font-family:\'Segoe UI\',Tahoma,Arial,sans-serif;direction:ltr;display:block;margin:0 auto">';
+
+  // خطوط شبكية
+  for(var g=0;g<=4;g++){
+    var gy=padT+chartH-g*(chartH/4);
+    var gv2=Math.round(maxVal*g/4);
+    svg+='<line x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'" stroke="#e0f0e8" stroke-width="1"/>';
+    svg+='<text x="'+(padL-4)+'" y="'+(gy+4)+'" text-anchor="end" font-size="8" fill="#6b9980">'+gv2+'</text>';
+  }
+
+  // الأعمدة
+  for(var ci=0;ci<4;ci++){
+    var gx=padL+ci*barGroupW;
+    var totalGroupW=barW*ks.length+(ks.length-1)*3;
+    var startX=gx+(barGroupW-totalGroupW)/2;
+
+    classData.forEach(function(cd,ki){
+      var cnt=cd.bins[ci];
+      var bH=cnt>0?Math.max(Math.round(cnt/maxVal*chartH),4):0;
+      var bx=startX+ki*(barW+3);
+      var by=padT+chartH-bH;
+      svg+='<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+bH+'" rx="3" fill="'+cd.color+'" opacity="0.9"/>';
+      if(cnt>0){svg+='<text x="'+(bx+barW/2)+'" y="'+(by-3)+'" text-anchor="middle" font-size="8" font-weight="bold" fill="'+cd.color+'">'+cnt+'</text>';}
+    });
+
+    // تسمية المحور السيني
+    var catX=gx+barGroupW/2;
+    var catY=H-4;
+    svg+='<text x="'+catX+'" y="'+catY+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="'+darkColors[ci]+'">'+labels[ci]+'</text>';
+  }
+
+  // محور X
+  svg+='<line x1="'+padL+'" y1="'+(padT+chartH)+'" x2="'+(W-padR)+'" y2="'+(padT+chartH)+'" stroke="#b8e8d4" stroke-width="1.5"/>';
+
+  // مفتاح الألوان (legend) — يمين
+  if(ks.length>1){
+    classData.forEach(function(cd,ki){
+      var lx=padL,ly=padT+ki*16;
+      // نضع Legend في أسفل إذا أكثر من صفين
+      var legY=padT+chartH+14+ki*13;
+      svg+='<rect x="'+padL+'" y="'+legY+'" width="9" height="9" rx="2" fill="'+cd.color+'"/>';
+      svg+='<text x="'+(padL+12)+'" y="'+(legY+8)+'" font-size="8" fill="#1a2e22">'+cd.name+'</text>';
+    });
+  }
+
+  svg+='</svg>';
+  return svg;
+}
+
+/* ════════════════════════════════════════
+   AI SUMMARY — ملخص عام بالذكاء الاصطناعي
+════════════════════════════════════════ */
+async function buildAISummary(ks, qs, classesObj, skills){
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(classesObj[k].students);});
+  var n=allSts.length;
+  if(!n||!tM)return'';
+
+  // تجهيز البيانات للإرسال
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var avg=Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10;
+  var avgPct=Math.round(avg/tM*100);
+  var bins=[0,0,0,0];
+  scores.forEach(function(s){var p=tM?s/tM*100:0;if(p<=40)bins[0]++;else if(p<=60)bins[1]++;else if(p<=80)bins[2]++;else bins[3]++;});
+
+  var skillsData=skills.map(function(sk,si){
+    var p=skillPct(allSts,qs,si);
+    return sk+': '+(p!==null?p+'%':'—');
+  }).join('، ');
+
+  var classesData=ks.map(function(k){
+    var sts=classesObj[k].students;
+    var sc=sts.map(function(st){return getTotal(st,qs);});
+    var a=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0;
+    var p=tM?Math.round(a/tM*100):0;
+    return k+': متوسط '+a+'/'+tM+' ('+p+'%)';
+  }).join(' | ');
+
+  /* Bloom distribution */
+  var bloomCounts=[0,0,0,0,0,0];
+  qs.forEach(function(q){var b=(q.bloom||1)-1;if(b>=0&&b<6)bloomCounts[b]++;});
+  var bloomSummary=BLOOM_LEVELS.map(function(b,i){return bloomCounts[i]?b.ar+'('+bloomCounts[i]+')':null;}).filter(Boolean).join('، ');
+  var sd=SUBJECT_DATA[currentSubject]||{};
+  var subjLabel=sd.label||gv('subject')||'غير محدد';
+  var writingLang=sd.lang==='he'?'Hebrew (עברית)':sd.lang==='en'?'English':'العربية';
+  var prompt='أنت خبير تربوي متخصص. اكتب ملخصاً تحليلياً مختصراً (5-7 جمل) باللغة '+writingLang+' عن نتائج امتحان مادة "'+subjLabel+'" بأسلوب احترافي.\n'
+    +'البيانات:\n'
+    +'- عدد الطلاب: '+n+'\n'
+    +'- متوسط الدرجات: '+avg+'/'+tM+' ('+avgPct+'%)\n'
+    +'- توزيع المستويات: ضعيف(0-'+PASSING_PCT+'%): '+bins[0]+' طالب، متوسط: '+bins[1]+' طالب، جيد: '+bins[2]+' طالب، ممتاز: '+bins[3]+' طالب\n'
+    +(classesData?'- الصفوف: '+classesData+'\n':'')
+    +(skillsData?'- المهارات: '+skillsData+'\n':'')
+    +(bloomSummary?'- توزيع بلوم: '+bloomSummary+'\n':'')
+    +'اكتب الملخص بصيغة فقرة واحدة تشمل: المستوى العام، أداء المهارات، تحليل مستويات بلوم (هل الامتحان يقيس التفكير العالي أم الحفظ فقط؟)، وتوصية تربوية واحدة. تقييم نوعي لا أرقام مفصلة.';
+
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(!resp.ok)return'';
+    var data=await resp.json();
+    return(data.content&&data.content[0]&&data.content[0].text)||'';
+  }catch(e){return'';}
+}
+
+function buildWorkbook(){
+  var ks=Object.keys(S.classes),qs=S.questions,tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var teacher=gv('teacherName'),subject=gv('subject'),semester=gv('semester'),year=gv('year');
+  var now=new Date().toLocaleString('ar-SA');var wb=XLSX.utils.book_new();
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(S.classes[k].students);});
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var n=allSts.length,avg=n?Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10:0,avgPct=tM?Math.round(avg/tM*100):0;
+  var ins=genInsights(allSts,qs,ks,avgPct,tM);
+
+  /* ── صفحة الملخص العام لجميع الصفوف ── */
+  var sd=[['منصة التقييم الذكي: بصيرة وبوصلة','','','','','','','','','بإرشاد مركزة التقييم منى مصطفى'],[],
+    [T('pdfTeacher'),teacher,T('pdfSubject'),subject,T('pdfSem'),semester,'السنة',year,T('pdfDate'),now],[],[T('xlSum')],
+    [T('statStudents'),T('statAvg'),'max','%'],[n,avg,tM,avgPct+'%'],[],['تحليل وتوصيات']];
+  ins.ins.forEach(function(x){sd.push([x.i+' '+x.t]);});
+  ins.recs.forEach(function(r,i){sd.push([(i+1)+'. '+r]);});
+  sd.push([],['ملخص الصفوف'],['الصف','عدد الطلاب','المتوسط','النسبة%','التقييم']);
+  ks.forEach(function(k){
+    var sts=S.classes[k].students,sc=sts.map(function(st){return getTotal(st,qs);});
+    var a2=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0;
+    var p=tM?Math.round(a2/tM*100):0;
+    sd.push([k,sts.length,a2+'/'+tM,p+'%',evalStr(p)]);
+  });
+  sd.push([],[T('pdfSkills')],[T('stWord'),'%',T('pdfEval')]);
+  S.skills.forEach(function(sk,si){var p=skillPct(allSts,qs,si);sd.push([sk,p!==null?p+'%':'—',p!==null?evalStr(p):'—']);});
+  var ws0=XLSX.utils.aoa_to_sheet(sd);ws0['!cols']=[{wch:28},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:28}];
+  XLSX.utils.book_append_sheet(wb,ws0,'ملخص جميع الصفوف'.substring(0,31));
+
+  /* ── صفحة مفصلة لكل صف ── */
+  ks.forEach(function(k){
+    var cls=S.classes[k];
+    var clSts=cls.students;
+    var clScores=clSts.map(function(st){return getTotal(st,qs);});
+    var clN=clSts.length,clAvg=clN?Math.round(clScores.reduce(function(a,b){return a+b;},0)/clN*10)/10:0;
+    var clPct=tM?Math.round(clAvg/tM*100):0;
+    var clIns=genInsights(clSts,qs,[k],clPct,tM);
+    var rows=[
+      ['منصة التقييم الذكي — '+k,'','','','','بإرشاد مركزة التقييم منى مصطفى'],
+      [T('pdfTeacher'),teacher,T('pdfSubject'),subject,T('pdfDate'),now],
+      [],
+      ['ملخص الصف',k,'','',''],
+      ['عدد الطلاب','المتوسط','أعلى علامة','أدنى علامة','نسبة النجاح %'],
+      [clN, clAvg+'/'+tM, (clScores.length?Math.max.apply(null,clScores):0)+'/'+tM, (clScores.length?Math.min.apply(null,clScores):0)+'/'+tM, clPct+'%'],
+      []
+    ];
+    /* توزيع التقييمات */
+    var dist={ممتاز:0,جيدجداً:0,جيد:0,مقبول:0,ضعيف:0};
+    clSts.forEach(function(st){var p=tM?Math.round(getTotal(st,qs)/tM*100):0;var e=evalStr(p);if(dist[e]!==undefined)dist[e]++;});
+    rows.push(['توزيع التقييمات','ممتاز','جيد جداً','جيد','مقبول','ضعيف']);
+    rows.push(['العدد',dist['ممتاز']||0,dist['جيدجداً']||0,dist['جيد']||0,dist['مقبول']||0,dist['ضعيف']||0]);
+    rows.push([]);
+    /* نتائج الطلاب */
+    var hdr=[T('xlStName')];qs.forEach(function(q,i){hdr.push('Q'+(i+1)+' /'+q.maxMark);});hdr.push(T('xlTotal'),T('xlPct'),T('xlEval'));
+    rows.push(hdr);
+    clSts.forEach(function(st){var tot=getTotal(st,qs),p=tM?Math.round(tot/tM*100):0;var row=[st.name];qs.forEach(function(q,qi){var v=st.grades['q'+qi];row.push(v!==undefined&&v!==''?v:0);});row.push(tot,p+'%',evalStr(p));rows.push(row);});
+    /* مهارات الصف */
+    if(S.skills.length){rows.push([],[T('xlClSkills')]);S.skills.forEach(function(sk,si){var p=skillPct(clSts,qs,si);rows.push([sk,p!==null?p+'%':'—',p!==null?evalStr(p):'—']);});}
+    /* توصيات */
+    rows.push([],['التوصيات والملاحظات']);
+    clIns.recs.forEach(function(r,i){rows.push([(i+1)+'. '+r]);});
+    var ws=XLSX.utils.aoa_to_sheet(rows);
+    var cols=[{wch:24}];qs.forEach(function(){cols.push({wch:16});});cols.push({wch:10},{wch:10},{wch:14});ws['!cols']=cols;
+    XLSX.utils.book_append_sheet(wb,ws,('تفاصيل_'+k).replace(/[\\\/\*\[\]:?]/g,'').substring(0,31));
+  });
+
+  /* ── صفحة كل الطلاب مجتمعين ── */
+  var ah=[T('clWord'),T('xlStName')];qs.forEach(function(q,i){ah.push('Q'+(i+1)+'/'+q.maxMark);});ah.push(T('xlTotal'),T('xlPct'),T('xlEval'));
+  var ar=[ah];ks.forEach(function(k){S.classes[k].students.forEach(function(st){var tot=getTotal(st,qs),p=tM?Math.round(tot/tM*100):0;var row=[k,st.name];qs.forEach(function(q,qi){var v=st.grades['q'+qi];row.push(v!==undefined&&v!==''?v:0);});row.push(tot,p+'%',evalStr(p));ar.push(row);});});
+  var wsA=XLSX.utils.aoa_to_sheet(ar);wsA['!cols']=[{wch:14},{wch:22}].concat(qs.map(function(){return{wch:12};})).concat([{wch:10},{wch:10},{wch:12}]);
+  XLSX.utils.book_append_sheet(wb,wsA,T('xlAll').substring(0,31));return wb;
+}
+
+function exportExcel(){
+  var ks=Object.keys(S.classes);if(!ks.length||!S.questions.length){toast(T('noData'),'w');return;}
+  XLSX.writeFile(buildWorkbook(),'بصيرة_وبوصلة_'+(gv('subject')||'مسح')+'_'+(gv('year')||'2025')+'.xlsx');
+  toast('✅ Excel','s',2500);
+}
+
+/* ════════════════════════════════════════
+   SEND MODAL
+════════════════════════════════════════ */
+function openSendModal(){if(!Object.keys(S.classes).length||!S.questions.length){toast(T('noData'),'w');return;}sendMethod=null;goSendStep1();document.getElementById('sendModal').classList.add('open');}
+function closeSendModal(){document.getElementById('sendModal').classList.remove('open');sendMethod=null;}
+function pickMethod(m){sendMethod=m;document.getElementById('mc-email').classList.toggle('sel',m==='email');document.getElementById('mc-wa').classList.toggle('sel',m==='wa');var nb=document.getElementById('s1Next');nb.disabled=false;nb.style.opacity='1';nb.style.cursor='pointer';}
+function goSendStep1(){document.getElementById('sStep1').style.display='block';document.getElementById('sStep2').style.display='none';document.getElementById('sStep3').style.display='none';}
+function goSendStep2(){
+  if(!sendMethod){toast('اختر طريقة','w');return;}
+  document.getElementById('sStep1').style.display='none';document.getElementById('sStep2').style.display='block';document.getElementById('sStep3').style.display='none';
+  if(sendMethod==='email'){document.getElementById('s2Title').textContent='البريد الإلكتروني';document.getElementById('s2Sub').textContent='أدخل بريد مركزة التقييم';document.getElementById('s2Label').textContent='البريد الإلكتروني';var ci=document.getElementById('contactVal');ci.type='email';ci.placeholder='mona@school.edu.jo';document.getElementById('s2InfoBox').className='info-box em';document.getElementById('s2InfoBox').textContent='📎 سيُنزَّل Excel ويُفتح تطبيق البريد.';}
+  else{document.getElementById('s2Title').textContent='رقم واتساب';document.getElementById('s2Sub').textContent='أدخل رقم الهاتف مع رمز الدولة';document.getElementById('s2Label').textContent='رقم الهاتف';var ci2=document.getElementById('contactVal');ci2.type='tel';ci2.placeholder='962791234567';document.getElementById('s2InfoBox').className='info-box wa';document.getElementById('s2InfoBox').textContent='💬 سيُنزَّل Excel ويُفتح واتساب مع الملخص.';}
+}
+function goSendStep3(){
+  var cv=document.getElementById('contactVal').value.trim();if(!cv){toast('أدخل بيانات التواصل','w');return;}
+  document.getElementById('sStep2').style.display='none';document.getElementById('sStep3').style.display='block';
+  document.getElementById('s3Title').textContent='جارٍ الإرسال...';
+  if(sendMethod==='email')doEmail(cv);else doWa(cv);
+}
+function animProg(p,d,cb){document.getElementById('progFill').style.width=p+'%';if(cb)setTimeout(cb,d);}
+function s3body(icon,msg,done){
+  document.getElementById('s3Title').textContent=done?'تم ✓':'جارٍ الإرسال...';
+  document.getElementById('s3Body').innerHTML='<div style="font-size:36px;margin-bottom:10px">'+icon+'</div><p style="color:#1a2e22;font-size:13px;line-height:1.8">'+msg+'</p>';
+  document.getElementById('s3CloseBtn').style.display=done?'block':'none';
+  document.getElementById('progWrap').style.display=done?'none':'block';
+}
+function buildSummaryText(){
+  var ks=Object.keys(S.classes),qs=S.questions,tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var allSts=[];ks.forEach(function(k){allSts=allSts.concat(S.classes[k].students);});
+  var scores=allSts.map(function(st){return getTotal(st,qs);});
+  var n=allSts.length,avg=n?Math.round(scores.reduce(function(a,b){return a+b;},0)/n*10)/10:0,avgPct=tM?Math.round(avg/tM*100):0;
+  var ins=genInsights(allSts,qs,ks,avgPct,tM);
+  var L=[T('rptTxt'),'━━━━━━━━━━━━',T('pdfTeacher')+': '+(gv('teacherName')||'—'),T('pdfSubject')+': '+(gv('subject')||'—'),T('pdfSem')+': '+(gv('semester')||'—'),T('pdfDate')+': '+new Date().toLocaleDateString('ar-SA'),'━━━━━━━━━━━━',T('statStudents')+': '+n+' | avg: '+avg+'/'+tM+' ('+avgPct+'%)','━━━━━━━━━━━━'];
+  ks.forEach(function(k){var sts=S.classes[k].students,sc=sts.map(function(st){return getTotal(st,qs);});var a=sc.length?Math.round(sc.reduce(function(x,y){return x+y;},0)/sc.length*10)/10:0,p=tM?Math.round(a/tM*100):0;L.push('• '+k+': '+a+'/'+tM+' ('+p+'%) '+evalStr(p));});
+  if(S.skills.length){L.push('━━━━━━━━━━━━');S.skills.forEach(function(sk,si){var p=skillPct(allSts,qs,si);L.push('• '+sk+': '+(p!==null?p+'%':'—'));});}
+  L.push('━━━━━━━━━━━━','💡 '+T('pdfInsLbl')+':');ins.ins.forEach(function(x){L.push(x.i+' '+x.t);});
+  L.push('📋 '+T('pdfRecLbl')+':');ins.recs.forEach(function(r,i){L.push((i+1)+'. '+r);});
+  return L.join('\n');
+}
+function doEmail(email){
+  s3body('⏳','جارٍ تحضير الملفات...',false);animProg(25,400,function(){
+    try{XLSX.writeFile(buildWorkbook(),'بصيرة_وبوصلة.xlsx');}catch(e){console.warn(e);}
+    animProg(55,500,function(){
+      document.getElementById('printArea').innerHTML=buildPrintHTML('');
+      animProg(80,400,function(){
+        var subj=encodeURIComponent('تقرير التقييم — '+(gv('subject')||'')+' '+(gv('year')||''));
+        var body=encodeURIComponent(buildSummaryText()+'\n\n[تم تنزيل ملف Excel على جهازك — أرفقه مع هذا البريد]');
+        window.location.href='mailto:'+email+'?subject='+subj+'&body='+body;
+        animProg(100,300,function(){s3body('✅','<b>تم!</b><br><br><span style="font-size:12px;color:#4a7a60">1. تم تنزيل Excel ✅<br>2. تم فتح تطبيق البريد — أرفق الملف وأرسل</span>',true);syncSheets();saveSession();});
+      });
+    });
+  });
+}
+function doWa(phone){
+  s3body('⏳','جارٍ تحضير الملفات...',false);animProg(25,400,function(){
+    try{XLSX.writeFile(buildWorkbook(),'بصيرة_وبوصلة.xlsx');}catch(e){console.warn(e);}
+    animProg(65,500,function(){
+      window.open('https://wa.me/'+phone.replace(/[\s+\-]/g,'')+'?text='+encodeURIComponent(buildSummaryText()),'_blank');
+      animProg(100,300,function(){s3body('✅','<b>تم!</b><br><br><span style="font-size:12px;color:#4a7a60">1. تم تنزيل Excel ✅<br>2. تم فتح واتساب — أرفق الملف يدوياً</span>',true);syncSheets();saveSession();});
+    });
+  });
+}
+/* ════════════════════════════════════════
+   INPUT METHOD CHOICE
+════════════════════════════════════════ */
+var inputMethod='manual'; // 'manual' | 'upload'
+var examFileData=null; // base64 string
+var examFileType=''; // 'pdf' | 'docx'
+var aiTableRows=[]; // [{section,num,skill,bloom,marks}]
+var currentSubject=''; // 'arabic'|'hebrew'|'english'|'math'|'science'|'other'
+
+/* ════════════════════════════════════════
+   SUBJECT / LANGUAGE DEFINITIONS
+════════════════════════════════════════ */
+var SUBJECT_DATA={
+  arabic:{
+    label:'لغة عربية',lang:'ar',langName:'العربية',outputLang:'العربية',
+    skills:['فهم المقروء','الاستيعاب والتحليل','التعبير الكتابي','القواعد النحوية','البلاغة والأسلوب','الأدب والنصوص','المفردات والمعاني','التلخيص والاستنتاج']
+  },
+  hebrew:{
+    label:'עברית',lang:'he',langName:'עברית',outputLang:'עברית',
+    skills:['הבנת הנקרא','ניתוח טקסט','כתיבה יצירתית','דקדוק','ספרות','אוצר מילים','סיכום והסקה','השוואה וניגוד']
+  },
+  english:{
+    label:'English',lang:'en',langName:'English',outputLang:'English',
+    skills:['Reading Comprehension','Text Analysis','Creative Writing','Grammar & Language','Vocabulary','Inference & Deduction','Summary & Synthesis','Literature']
+  },
+  math:{
+    label:'رياضيات',lang:'ar',langName:'الرياضيات',outputLang:'العربية أو الإنجليزية حسب الامتحان',
+    skills:['العمليات الحسابية','حل المسائل','الجبر والمعادلات','الهندسة','الإحصاء والاحتمال','التفكير المنطقي','التحليل الرياضي','التطبيق في الحياة']
+  },
+  science:{
+    label:'علوم',lang:'ar',langName:'العلوم',outputLang:'العربية أو الإنجليزية حسب الامتحان',
+    skills:['المفاهيم العلمية','الاستقصاء والتجريب','تفسير البيانات','التصنيف والمقارنة','حل المشكلات العلمية','التطبيق والربط','التفكير الناقد','الصياغة العلمية']
+  },
+  other:{
+    label:'أخرى',lang:'ar',langName:'عامة',outputLang:'حسب لغة الامتحان',
+    skills:['الفهم','التحليل','التطبيق','التقييم','الإبداع','المعرفة']
+  }
+};
+
+/* بلوم الستة مع ترجمات */
+var BLOOM_LEVELS=[
+  {id:1,ar:'تذكر',en:'Remembering',he:'זכירה',      cls:'bloom-1',icon:'🧠',keywords_ar:['عرّف','اذكر','سمّ','أكمل','تذكر','حدد','قائمة','متى','أين'],        keywords_en:['define','list','recall','name','identify','state','when','where']},
+  {id:2,ar:'فهم', en:'Understanding',he:'הבנה',     cls:'bloom-2',icon:'💡',keywords_ar:['اشرح','لخّص','قارن','استنتج','فسّر','أعد صياغة','وضّح','اقرأ'],     keywords_en:['explain','summarize','describe','interpret','classify','compare']},
+  {id:3,ar:'تطبيق',en:'Applying',he:'יישום',        cls:'bloom-3',icon:'⚙️',keywords_ar:['طبّق','احسب','حلّل مسألة','استخدم','نفّذ','أنتج','أظهر'],          keywords_en:['apply','calculate','solve','use','demonstrate','implement']},
+  {id:4,ar:'تحليل',en:'Analyzing',he:'ניתוח',       cls:'bloom-4',icon:'🔍',keywords_ar:['حلّل','فرّق','صنّف','اكشف','ميّز','قارن','افصل','فنّد'],           keywords_en:['analyze','differentiate','distinguish','examine','compare','break down']},
+  {id:5,ar:'تقييم',en:'Evaluating',he:'הערכה',      cls:'bloom-5',icon:'⚖️',keywords_ar:['قيّم','احكم','ناقش','برّر','انقد','دافع','اختر مع تعليل'],        keywords_en:['evaluate','judge','justify','critique','assess','defend','argue']},
+  {id:6,ar:'تركيب',en:'Creating',he:'יצירה',        cls:'bloom-6',icon:'✨',keywords_ar:['صمّم','ابتكر','اقترح','كوّن','اكتب','أنشئ','خطّط','طوّر'],        keywords_en:['create','design','compose','plan','construct','develop','invent']}
+];
+
+function getBloomLabel(bloomId){
+  var b=BLOOM_LEVELS.find(function(x){return x.id===bloomId;});
+  if(!b)return'';
+  var sd=SUBJECT_DATA[currentSubject]||{};
+  return sd.lang==='en'?b.en:sd.lang==='he'?b.he:b.ar;
+}
+function getBloomClass(bloomId){
+  var b=BLOOM_LEVELS.find(function(x){return x.id===bloomId;});
+  return b?b.cls:'bloom-1';
+}
+function getBloomIcon(bloomId){
+  var b=BLOOM_LEVELS.find(function(x){return x.id===bloomId;});
+  return b?b.icon:'';
+}
+
+/* ════════════════════════════════════════
+   SUBJECT PICKER
+════════════════════════════════════════ */
+function pickSubject(key){
+  currentSubject=key;
+  document.querySelectorAll('.subj-card').forEach(function(el){el.classList.remove('sel');});
+  var el=document.getElementById('sj-'+key);
+  if(el)el.classList.add('sel');
+  var sd=SUBJECT_DATA[key]||{};
+  var hint=document.getElementById('subjectHint');
+  var hintTxt=document.getElementById('subjectHintText');
+  if(hint&&hintTxt){
+    hintTxt.textContent=sd.label+' ('+sd.langName+')';
+    hint.style.display='block';
+  }
+  /* auto-fill subject field if empty */
+  var subjectInp=document.getElementById('subject');
+  if(subjectInp&&!subjectInp.value.trim()){
+    subjectInp.value=sd.label;
+  }
+  /* update skill placeholder */
+  var skillInp=document.getElementById('skillInput');
+  if(skillInp&&sd.skills){
+    skillInp.placeholder=sd.skills.slice(0,3).join('\n')+'...';
+  }
+}
+
+function chooseMethod(m){
+  inputMethod=m;
+  document.getElementById('mcManual').classList.toggle('sel', m==='manual');
+  document.getElementById('mcUpload').classList.toggle('sel', m==='upload');
+  document.getElementById('manualSection').classList.toggle('section-hidden', m!=='manual');
+  document.getElementById('uploadSection').classList.toggle('section-hidden', m!=='upload');
+}
+
+/* ── FILE HANDLING ── */
+function handleFileDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  var file=e.dataTransfer.files[0];
+  if(file)processExamFile(file);
+}
+function handleFileSelect(e){
+  var file=e.target.files[0];
+  if(file)processExamFile(file);
+}
+function processExamFile(file){
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(!['pdf','doc','docx'].includes(ext)){toast('يُقبل فقط PDF أو Word','w');return;}
+  examFileType=ext==='pdf'?'pdf':'docx';
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    examFileData=ev.target.result.split(',')[1]; // base64
+    document.getElementById('uploadFileName').innerHTML='<div class="upload-file-name">📎 '+file.name+'</div>';
+    document.getElementById('btnAnalyzeFile').style.display='block';
+    toast('✅ تم اختيار الملف: '+file.name,'s',2500);
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ── AI ANALYSIS ── */
+async function analyzeExamFile(){
+  if(!examFileData){toast('اختر ملفاً أولاً','w');return;}
+  var card=document.getElementById('aiResultCard');
+  var loadBox=document.getElementById('aiLoadingBox');
+  var tableWrap=document.getElementById('aiTableWrap');
+  var actions=document.getElementById('aiTableActions');
+  card.classList.remove('section-hidden');
+  loadBox.classList.remove('section-hidden');
+  tableWrap.innerHTML='';
+  actions.classList.add('section-hidden');
+  document.getElementById('btnAnalyzeFile').disabled=true;
+
+  /* build subject-aware Bloom prompt */
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  var bloomNamesStr=BLOOM_LEVELS.map(function(b){return b.id+':'+b.ar+'('+b.en+')';}).join(', ');
+  var subjectSkillsStr=sd.skills.join(', ');
+  var outputLang=sd.outputLang||'العربية';
+  var prompt='أنت خبير تربوي متخصص في تحليل الامتحانات المدرسية وتصنيف الأسئلة وفق تصنيف بلوم المعرفي.\n'
+    +'المادة: '+sd.label+' | لغة الإخراج: '+outputLang+'\n'
+    +'مهارات هذه المادة المقترحة: '+subjectSkillsStr+'\n\n'
+    +'قم بتحليل الامتحان التالي واستخرج كل سؤال مع:\n'
+    +'1) القسم/الجزء الذي ينتمي إليه\n'
+    +'2) رقم السؤال أو تسميته\n'
+    +'3) المهارة المحددة التي يقيسها (من قائمة المهارات أعلاه أو مهارة مناسبة)\n'
+    +'4) مستوى بلوم (رقم 1-6): '+bloomNamesStr+'\n'
+    +'5) عدد العلامات\n\n'
+    +'أرجع فقط JSON array صالح (بدون أي نص إضافي أو markdown أو backticks):\n'
+    +'[{"section":"القسم","num":"1","skill":"المهارة","bloom":2,"marks":5}]\n'
+    +'- bloom: رقم من 1 (تذكر) إلى 6 (تركيب/إبداع)\n'
+    +'- اكتب المهارة بلغة الامتحان نفسها\n'
+    +'أعد فقط JSON array ولا شيء آخر إطلاقاً.';
+
+  try{
+    var messages;
+
+    if(examFileType==='pdf'){
+      // PDF → send as document (supported by API)
+      messages=[{role:'user',content:[
+        {type:'document',source:{type:'base64',media_type:'application/pdf',data:examFileData}},
+        {type:'text',text:prompt}
+      ]}];
+    } else {
+      // Word (docx) → extract text via XML parsing, send as plain text
+      var docText=await extractDocxText(examFileData);
+      if(!docText||docText.trim().length<10)throw new Error('لم يُتمكن من قراءة نص الملف. تأكد أن الملف ليس محمياً بكلمة سر.');
+      messages=[{role:'user',content:[
+        {type:'text',text:'محتوى ملف الامتحان:\n\n'+docText+'\n\n---\n\n'+prompt}
+      ]}];
+    }
+
+    var response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        system:'أنت محلل امتحانات متخصص. مهمتك استخراج بيانات الأسئلة من ملفات الامتحانات وإعادتها كـ JSON array فقط بدون أي نص إضافي.',
+        messages:messages
+      })
+    });
+
+    if(!response.ok){
+      var errStatus=response.status;
+      var errData=await response.json().catch(function(){return{};});
+      var friendlyMsg='';
+      if(errStatus===429){friendlyMsg='⏳ تم تجاوز حد الاستخدام المؤقت للذكاء الاصطناعي. انتظر بضع دقائق ثم حاول مرة أخرى، أو استخدم خيار الإدخال اليدوي مؤقتاً.';}
+      else if(errStatus===401||errStatus===403){friendlyMsg='🔑 خطأ في المصادقة — تحقق من إعدادات الخدمة.';}
+      else if(errStatus===413||errStatus===400){friendlyMsg='📄 الملف كبير جداً أو تنسيقه غير مدعوم. جرب ملفاً أصغر حجماً.';}
+      else{friendlyMsg='خطأ من الخادم ('+errStatus+'). حاول مرة أخرى بعد قليل.';}
+      throw new Error(friendlyMsg);
+    }
+
+    var data=await response.json();
+    if(!data||!data.content||!Array.isArray(data.content)){throw new Error('استجابة غير صالحة من الخادم');}
+    var text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text||'';}).join('');
+    if(!text.trim()){throw new Error('الاستجابة فارغة');}
+
+    // Extract JSON array robustly
+    var clean=text.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'');
+    var arrMatch=clean.match(/\[[\s\S]*\]/);
+    if(!arrMatch){throw new Error('لم يُعثر على بيانات JSON في الاستجابة');}
+
+    var parsed=JSON.parse(arrMatch[0]);
+    if(!Array.isArray(parsed)||!parsed.length){throw new Error('البيانات المُحللة فارغة');}
+
+    aiTableRows=parsed.map(function(r,i){
+      var bloomVal=parseInt(r.bloom||r.Bloom||r.level||r.Level||2)||2;
+      if(bloomVal<1)bloomVal=1;if(bloomVal>6)bloomVal=6;
+      return{
+        section:String(r.section||r.Section||r.قسم||r.Part||r.part||''),
+        num:String(r.num||r.number||r.رقم||r.question||r.Question||''||(i+1)),
+        skill:String(r.skill||r.Skill||r.مهارة||r.skills||r.Skills||''),
+        bloom:bloomVal,
+        marks:Math.max(1,parseInt(r.marks||r.Marks||r.علامات||r.mark||r.points||r.Points||5)||5)
+      };
+    });
+
+    renderAiTable();
+    renderBloomDistribution();
+    actions.classList.remove('section-hidden');
+    document.getElementById('bloomDistWrap').classList.remove('section-hidden');
+    toast('✅ تم التحليل — '+aiTableRows.length+' سؤال بمستويات بلوم','s',3000);
+
+  }catch(err){
+    console.error('AI Analysis error:',err);
+    var msg=(err.message||'خطأ غير معروف').replace(/\n/g,'<br>');
+    var isRateLimit=(err.message||'').indexOf('429')>=0||(err.message||'').indexOf('تجاوز')>=0;
+    tableWrap.innerHTML='<div style="padding:16px;background:#fff0f5;border-radius:12px;border:1px solid #f5b8d4;line-height:1.9">'
+      +'<div style="font-size:14px;font-weight:700;color:#c04060;margin-bottom:8px">⚠️ تعذّر تحليل الملف</div>'
+      +'<div style="font-size:13px;color:#a03050;margin-bottom:10px">'+msg+'</div>'
+      +(isRateLimit
+        ? '<div style="background:#fffbea;border:1px solid #f5d87a;border-radius:9px;padding:10px 13px;font-size:12px;color:#7a5e00;margin-bottom:12px">'
+          +'💡 <b>الحل:</b> انتظر 5-10 دقائق وأعد المحاولة، أو انتقل للإدخال اليدوي وأدخل المهارات والأسئلة مباشرةً.'
+          +'</div>'
+        : '<div style="font-size:12px;color:#6b9980;margin-bottom:12px">تأكد أن الملف يحتوي على نص قابل للقراءة (وليس صوراً فقط).</div>'
+      )
+      +'<button onclick="chooseMethod(\'manual\')" style="padding:8px 18px;background:#2ecc8f;color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">↩ التحويل للإدخال اليدوي</button>'
+      +'</div>';
+  }finally{
+    loadBox.classList.add('section-hidden');
+    document.getElementById('btnAnalyzeFile').disabled=false;
+  }
+}
+
+/* ── استخراج النص من ملف DOCX عبر XML ── */
+async function extractDocxText(base64Data){
+  // Decode base64 to binary
+  var binary=atob(base64Data);
+  var bytes=new Uint8Array(binary.length);
+  for(var i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+
+  // Use JSZip if available, otherwise manual ZIP parsing
+  if(typeof JSZip!=='undefined'){
+    var zip=await JSZip.loadAsync(bytes.buffer);
+    var xmlFile=zip.file('word/document.xml');
+    if(!xmlFile)throw new Error('الملف لا يبدو أنه DOCX صحيح');
+    var xmlText=await xmlFile.async('string');
+    return parseWordXml(xmlText);
+  } else {
+    // Fallback: load JSZip dynamically
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    var zip2=await JSZip.loadAsync(bytes.buffer);
+    var xmlFile2=zip2.file('word/document.xml');
+    if(!xmlFile2)throw new Error('الملف لا يبدو أنه DOCX صحيح');
+    var xmlText2=await xmlFile2.async('string');
+    return parseWordXml(xmlText2);
+  }
+}
+
+function parseWordXml(xml){
+  // Extract text from w:t tags and join paragraphs
+  var paragraphs=[];
+  var pMatches=xml.match(/<w:p[ >][\s\S]*?<\/w:p>/g)||[];
+  pMatches.forEach(function(p){
+    var texts=p.match(/<w:t[^>]*>([^<]*)<\/w:t>/g)||[];
+    var line=texts.map(function(t){return t.replace(/<[^>]+>/g,'');}).join('');
+    if(line.trim())paragraphs.push(line.trim());
+  });
+  return paragraphs.join('\n');
+}
+
+function loadScript(src){
+  return new Promise(function(resolve,reject){
+    if(document.querySelector('script[src="'+src+'"]')){resolve();return;}
+    var s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+  });
+}
+
+function renderAiTable(){
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  var isRTL=(sd.lang!=='en');
+  var bloomOptHtml=BLOOM_LEVELS.map(function(b){
+    var lbl=sd.lang==='en'?b.en:sd.lang==='he'?b.he:b.ar;
+    return'<option value="'+b.id+'">'+b.icon+' '+lbl+'</option>';
+  }).join('');
+  var html='<div style="overflow-x:auto"><table class="ai-table" style="min-width:680px"><thead><tr>'
+    +'<th>القسم / Section</th>'
+    +'<th style="min-width:60px">رقم / No.</th>'
+    +'<th style="min-width:160px">المهارة / Skill</th>'
+    +'<th style="min-width:140px">🎓 مستوى بلوم</th>'
+    +'<th style="min-width:70px">العلامات</th>'
+    +'<th></th>'
+    +'</tr></thead><tbody>';
+  aiTableRows.forEach(function(r,i){
+    var bloomVal=r.bloom||2;
+    var bCls=getBloomClass(bloomVal);
+    html+='<tr>'
+      +'<td><input class="ai-inp" value="'+esc(r.section||'')+'" onchange="aiTableRows['+i+'].section=this.value" dir="auto"/></td>'
+      +'<td><input class="ai-inp" style="width:56px" value="'+esc(r.num||'')+'" onchange="aiTableRows['+i+'].num=this.value" dir="auto"/></td>'
+      +'<td><input class="ai-inp" value="'+esc(r.skill||'')+'" onchange="aiTableRows['+i+'].skill=this.value;renderBloomDistribution()" dir="auto"/></td>'
+      +'<td><select class="bloom-sel '+bCls+'" onchange="updAiBloom(this,'+i+')">'+bloomOptHtml.replace('value=\"'+bloomVal+'\"','value=\"'+bloomVal+'\" selected')+'</select></td>'
+      +'<td><input class="ai-inp num" type="number" min="1" value="'+(r.marks||5)+'" onchange="aiTableRows['+i+'].marks=Math.max(1,parseInt(this.value)||1);this.value=aiTableRows['+i+'].marks"/></td>'
+      +'<td><button class="btn btn-xs btn-rose" onclick="rmAiRow('+i+')">×</button></td>'
+      +'</tr>';
+  });
+  html+='</tbody></table></div>';
+  document.getElementById('aiTableWrap').innerHTML=html;
+}
+
+function renderBloomDistribution(){
+  var wrap=document.getElementById('bloomDistWrap');
+  if(!wrap||!aiTableRows.length){return;}
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  /* count per level */
+  var counts=[0,0,0,0,0,0];
+  aiTableRows.forEach(function(r){var b=(r.bloom||1)-1;if(b>=0&&b<6)counts[b]++;});
+  var total=aiTableRows.length;
+  /* build display */
+  var lowerOrder=counts[0]+counts[1]; /* تذكر+فهم */
+  var midOrder=counts[2]+counts[3];   /* تطبيق+تحليل */
+  var higherOrder=counts[4]+counts[5];/* تقييم+تركيب */
+  var h='<div style="font-size:12px;font-weight:700;color:#1a8f63;margin-bottom:8px">🎓 توزيع الأسئلة على مستويات بلوم</div>';
+  h+='<div class="bloom-dist">';
+  BLOOM_LEVELS.forEach(function(b,i){
+    if(!counts[i])return;
+    var lbl=sd.lang==='en'?b.en:sd.lang==='he'?b.he:b.ar;
+    h+='<span class="bloom-badge '+b.cls+'">'+b.icon+' '+lbl+': '+counts[i]+'</span>';
+  });
+  h+='</div>';
+  /* progress bars */
+  var cats=[
+    {label:sd.lang==='en'?'Lower Order (Remembering+Understanding)':'مستويات دنيا (تذكر+فهم)',count:lowerOrder,color:'#ff8c69'},
+    {label:sd.lang==='en'?'Mid Order (Applying+Analyzing)':'مستويات وسطى (تطبيق+تحليل)',count:midOrder,color:'#5bb8f5'},
+    {label:sd.lang==='en'?'Higher Order (Evaluating+Creating)':'مستويات عليا (تقييم+تركيب)',count:higherOrder,color:'#2ecc8f'}
+  ];
+  cats.forEach(function(cat){
+    var pct=total?Math.round(cat.count/total*100):0;
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px">'
+      +'<span style="width:200px;color:#4a7a60;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+cat.label+'</span>'
+      +'<div style="flex:1;height:12px;background:#f0fbf6;border-radius:6px;overflow:hidden;border:1px solid #d4f0e4">'
+      +'<div style="width:'+pct+'%;height:100%;background:'+cat.color+';border-radius:6px;transition:width .4s"></div></div>'
+      +'<span style="font-weight:700;color:'+cat.color+';width:38px;text-align:left">'+pct+'%</span>'
+      +'</div>';
+  });
+  /* warning if too low-order heavy */
+  if(total>=3&&lowerOrder/total>0.7){
+    h+='<div class="bloom-warn">⚠️ <span><b>ملاحظة:</b> أكثر من 70% من الأسئلة في المستويات الدنيا (تذكر وفهم). يُوصى بإضافة أسئلة تطبيق وتحليل لاختبار أعمق.</span></div>';
+  }
+  wrap.innerHTML=h;
+}
+
+function updAiBloom(sel,i){
+  var v=parseInt(sel.value);
+  aiTableRows[i].bloom=v;
+  sel.className='bloom-sel '+getBloomClass(v);
+  renderBloomDistribution();
+}
+function esc(s){return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function rmAiRow(i){aiTableRows.splice(i,1);renderAiTable();renderBloomDistribution();}
+function addAiRow(){
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  aiTableRows.push({section:'',num:(aiTableRows.length+1)+'',skill:'',bloom:2,marks:5});
+  renderAiTable();
+  var inputs=document.getElementById('aiTableWrap').querySelectorAll('tbody tr:last-child input');
+  if(inputs.length)inputs[0].focus();
+}
+
+function applyAiTable(){
+  if(!aiTableRows.length){toast('الجدول فارغ','w');return;}
+  var sd=SUBJECT_DATA[currentSubject]||SUBJECT_DATA.other;
+  /* build unique skills preserving Bloom info in skill name */
+  var skills=[...new Set(aiTableRows.map(function(r){return(r.skill||'').trim();}).filter(Boolean))];
+  if(!skills.length){toast('أدخل المهارات في الجدول أولاً','w');return;}
+  /* store Bloom level per skill (dominant level) */
+  var skillBloom={};
+  aiTableRows.forEach(function(r){
+    var sk=(r.skill||'').trim();if(!sk)return;
+    if(!skillBloom[sk]||r.bloom>skillBloom[sk])skillBloom[sk]=r.bloom||2;
+  });
+  S.skills=skills;
+  S.skillBloom=skillBloom; /* store for reports/analysis */
+  renderSkills();
+  /* build questions with bloom */
+  S.questions=aiTableRows.map(function(r){
+    var sk=(r.skill||'').trim();
+    var si=skills.indexOf(sk);
+    var bloomVal=r.bloom||2;
+    var bloomLbl=getBloomLabel(bloomVal);
+    var sectionLabel=r.section?'['+r.section+'] ':'';
+    return{
+      text:sectionLabel+'س'+r.num,
+      skill:si>=0?si:0,
+      bloom:bloomVal,
+      maxMark:Math.max(1,parseInt(r.marks)||5)
+    };
+  });
+  qCount=S.questions.length;
+  renderQs();
+  /* summary toast */
+  var counts=[0,0,0,0,0,0];
+  S.questions.forEach(function(q){var b=(q.bloom||1)-1;if(b>=0&&b<6)counts[b]++;});
+  var hi=counts[4]+counts[5],lo=counts[0]+counts[1];
+  var bloomSummary=hi>0?(' | '+hi+' '+( sd.lang==='en'?'Higher Order':'مستوى عالٍ')):'';
+  toast('✅ '+S.questions.length+' سؤال و'+skills.length+' مهارة'+bloomSummary+' — يمكنك الآن إضافة صف','s',4000);
+  setTimeout(function(){
+    var lastCard=document.querySelector('#section-setup .card:last-child');
+    if(lastCard)lastCard.scrollIntoView({behavior:'smooth',block:'center'});
+  },400);
+}
+function esc2(s){return String(s).replace(/</g,'&lt;');}
+
+/* ════════════════════════════════════════
+   DARK MODE
+════════════════════════════════════════ */
+function toggleDark(){
+  DARK_MODE=!DARK_MODE;
+  document.body.classList.toggle('dark',DARK_MODE);
+  document.getElementById('darkToggle').textContent=DARK_MODE?'☀️':'🌙';
+  try{localStorage.setItem('baseeraBoosla_dark',DARK_MODE?'1':'0');}catch(e){}
+}
+(function(){try{if(localStorage.getItem('baseeraBoosla_dark')==='1'){DARK_MODE=true;document.body.classList.add('dark');document.getElementById('darkToggle').textContent='☀️';}}catch(e){}})();
+
+/* ════════════════════════════════════════
+   FULLSCREEN GRADES
+════════════════════════════════════════ */
+function toggleFullscreen(){
+  FS_MODE=!FS_MODE;
+  var main=document.querySelector('#screenTeacher .main');
+  var header=document.querySelector('#screenTeacher .header');
+  var mobileNav=document.querySelector('.mobile-nav');
+  var mobStrip=document.querySelector('.mob-strip');
+  var fsBar=document.getElementById('fsExitBar');
+  var fsBtn=document.getElementById('fsBtn');
+  if(FS_MODE){
+    header.style.display='none';
+    if(mobileNav)mobileNav.style.display='none';
+    if(mobStrip)mobStrip.style.display='none';
+    document.querySelector('.sidebar').style.display='none';
+    document.querySelector('.content').style.cssText='position:fixed;inset:0;z-index:180;padding:12px;overflow-y:auto;background:'+(DARK_MODE?'#0f1a14':'#f7fdf9');
+    fsBar.style.display='flex';
+    if(fsBtn)fsBtn.textContent='✕ خروج';
+    showSec('grades');
+    toast('⛶ وضع ملء الشاشة — اضغط ESC للخروج','s',2500);
+  } else {
+    header.style.display='';
+    if(mobileNav)mobileNav.style.display='';
+    if(mobStrip)mobStrip.style.display='';
+    document.querySelector('.sidebar').style.display='';
+    document.querySelector('.content').style.cssText='';
+    fsBar.style.display='none';
+    if(fsBtn)fsBtn.textContent='⛶ ملء الشاشة';
+  }
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&FS_MODE)toggleFullscreen();});
+
+/* ════════════════════════════════════════
+   STUDENT INDIVIDUAL REPORT
+════════════════════════════════════════ */
+function openStRep(el){
+  var clsName=el.dataset.cls,si=parseInt(el.dataset.si);
+  openStRepData(clsName,si);
+}
+function openStRepIdx(el){
+  var clsName=el.dataset.cls,si=parseInt(el.dataset.si);
+  openStRepData(clsName,si);
+}
+function openStRepData(clsName,si){
+  var cls=S.classes[clsName];if(!cls)return;
+  var st=cls.students[si];var qs=S.questions;
+  var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+  var tot=getTotal(st,qs),pct=tM?Math.round(tot/tM*100):0;
+  document.getElementById('stRepName').textContent=st.name;
+  document.getElementById('stRepClass').textContent=clsName+' | '+gv('subject')+' | '+gv('semester');
+  var col=pct>=(PASSING_PCT+20)?'#2ecc8f':pct>=PASSING_PCT?'#f5c842':'#ff6b9d';
+  var h='';
+  /* big score */
+  h+='<div style="text-align:center;padding:16px;background:'+col+'18;border:1px solid '+col+'55;border-radius:12px;margin-bottom:14px">'
+    +'<div style="font-size:36px;font-weight:800;color:'+col+'">'+tot+'<span style="font-size:16px;color:#6b9980">/'+tM+'</span></div>'
+    +'<div style="font-size:13px;font-weight:700;color:'+col+'">'+pct+'% — '+evalStr(pct)+'</div>'
+    +'</div>';
+  /* per-question table */
+  h+='<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px">'
+    +'<thead><tr><th style="text-align:right;padding:6px 8px;background:#f7fdf9;border-bottom:2px solid #d4f0e4;color:#1a8f63">السؤال</th>'
+    +'<th style="padding:6px 8px;background:#f7fdf9;border-bottom:2px solid #d4f0e4;color:#1a8f63">العلامة</th>'
+    +'<th style="padding:6px 8px;background:#f7fdf9;border-bottom:2px solid #d4f0e4;color:#1a8f63">الحد الأقصى</th>'
+    +'<th style="padding:6px 8px;background:#f7fdf9;border-bottom:2px solid #d4f0e4;color:#1a8f63">%</th></tr></thead><tbody>';
+  qs.forEach(function(q,qi){
+    var v=st.grades['q'+qi]||0,p=q.maxMark?Math.round(v/q.maxMark*100):0;
+    var qcol=p>=80?'#2ecc8f':p>=60?'#f5c842':'#ff6b9d';
+    h+='<tr><td style="padding:5px 8px;border-bottom:1px solid #edf8f3;font-weight:600">س'+(qi+1)+' — '+q.text+'</td>'
+      +'<td style="text-align:center;padding:5px 8px;border-bottom:1px solid #edf8f3;font-weight:700;color:'+qcol+'">'+v+'</td>'
+      +'<td style="text-align:center;padding:5px 8px;border-bottom:1px solid #edf8f3;color:#6b9980">'+q.maxMark+'</td>'
+      +'<td style="text-align:center;padding:5px 8px;border-bottom:1px solid #edf8f3;font-weight:700;color:'+qcol+'">'+p+'%</td></tr>';
+  });
+  h+='</tbody></table>';
+  /* skills bars */
+  if(S.skills.length){
+    h+='<div style="font-size:12px;font-weight:700;color:#1a8f63;margin-bottom:8px">أداء المهارات</div>';
+    S.skills.forEach(function(sk,si2){
+      var p=skillPct([st],qs,si2);if(p===null)return;
+      var sc=p>=80?'#2ecc8f':p>=60?'#f5c842':'#ff8c69';
+      h+='<div class="st-skill-bar"><span class="st-skill-lbl" title="'+sk+'">'+sk+'</span>'
+        +'<div class="st-skill-track"><div class="st-skill-fill" style="width:'+p+'%;background:'+sc+'"></div></div>'
+        +'<span class="st-skill-pct" style="color:'+sc+'">'+p+'%</span></div>';
+    });
+  }
+  document.getElementById('stRepContent').innerHTML=h;
+  /* store for print */
+  document.getElementById('stRepModal')._stData={name:st.name,cls:clsName,html:h,tot:tot,tM:tM,pct:pct};
+  document.getElementById('stRepModal').classList.add('open');
+}
+function closeStRep(){document.getElementById('stRepModal').classList.remove('open');}
+function printStRep(){
+  var d=document.getElementById('stRepModal')._stData;if(!d)return;
+  var teacher=gv('teacherName'),subject=gv('subject'),semester=gv('semester'),now=new Date().toLocaleDateString('ar-SA');
+  var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/><title>تقرير '+d.name+'</title>'
+    +'<style>body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;direction:rtl;padding:20px;color:#111;font-size:12pt}'
+    +'.hdr{background:#2ecc8f;color:#fff;padding:12px 16px;border-radius:9px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}'
+    +'.hdr h1{font-size:14pt;margin:0}.hdr p{font-size:10pt;opacity:.9;margin:2px 0}'
+    +'table{width:100%;border-collapse:collapse}th,td{padding:6px 9px;border:1px solid #d4f0e4}'
+    +'th{background:#e8faf3;color:#1a8f63;font-weight:700}'
+    +'.bar-track{height:12px;background:#e8faf3;border-radius:6px;overflow:hidden;flex:1}'
+    +'.bar-fill{height:100%;border-radius:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'.sk-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:10pt}'
+    +'@media print{@page{size:A4;margin:15mm}}</style></head><body>'
+    +'<div class="hdr"><div><h1>'+d.name+'</h1><p>'+d.cls+' | '+subject+' | '+semester+'</p></div>'
+    +'<div style="text-align:left"><p>المعلم: '+teacher+'</p><p>'+now+'</p></div></div>'
+    +d.html
+    +'<script>window.onload=function(){window.print();}<\/script></body></html>';
+  var b=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='تقرير_'+d.name+'.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+/* ════════════════════════════════════════
+   EXCEL IMPORT — استيراد أسماء الطلاب
+════════════════════════════════════════ */
+function importStudentsFromExcel(e){
+  var file=e.target.files[0];if(!file)return;
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(ext)){toast('يُقبل فقط xlsx, xls, csv','w');return;}
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var wb=XLSX.read(ev.target.result,{type:'binary'});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      /* collect non-empty cells from first column, skip header if it looks like one */
+      var names=[];
+      rows.forEach(function(row,ri){
+        var cell=String(row[0]||'').trim();
+        if(!cell)return;
+        /* skip header row (contains numbers or arabic 'اسم') */
+        if(ri===0&&(cell.includes('اسم')||cell.includes('الطالب')||cell.includes('Name')))return;
+        names.push(cell);
+      });
+      if(!names.length){toast('لم يُعثر على أسماء في العمود الأول','w');return;}
+      /* put into class modal textarea */
+      document.getElementById('newClsSt').value=names.join('\n');
+      if(!document.getElementById('clsModal').classList.contains('open')){
+        openClsModal();
+      }
+      toast('✅ تم تحميل '+names.length+' اسم من Excel','s',3000);
+    }catch(err){toast('تعذّر قراءة الملف: '+err.message,'e',3500);}
+  };
+  reader.readAsBinaryString(file);
+  e.target.value=''; /* reset so same file can be re-selected */
+}
+
+/* ════════════════════════════════════════
+   COMPARISON MODAL — مقارنة الفصول
+════════════════════════════════════════ */
+function openCompareModal(){
+  var sessions=loadAllSessions();
+  var subject=gv('subject')||'';
+  /* filter sessions with same subject */
+  var related=sessions.filter(function(s){return s.subject===subject&&s.questions&&s.questions.length;});
+  var content=document.getElementById('compareContent');
+  if(related.length<2){
+    content.innerHTML='<div class="empty"><div style="font-size:32px">📊</div>'
+      +'<p style="margin-top:8px">تحتاج إلى جلستين أو أكثر بنفس المادة لإجراء مقارنة.<br>'
+      +'<span style="font-size:12px;color:#6b9980">المادة الحالية: <b>'+subject+'</b></span></p></div>';
+    document.getElementById('compareModal').classList.add('open');
+    return;
+  }
+  var h='<p style="font-size:12px;color:#6b9980;margin-bottom:12px">مقارنة جلسات مادة <b>'+subject+'</b></p>';
+  /* table */
+  h+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr>'
+    +'<th style="text-align:right;padding:7px 10px;background:#e8faf3;color:#1a8f63;border-bottom:2px solid #b8e8d4">الجلسة</th>'
+    +'<th style="padding:7px 10px;background:#e8faf3;color:#1a8f63;border-bottom:2px solid #b8e8d4">الفصل</th>'
+    +'<th style="padding:7px 10px;background:#e8faf3;color:#1a8f63;border-bottom:2px solid #b8e8d4">الطلاب</th>'
+    +'<th style="padding:7px 10px;background:#e8faf3;color:#1a8f63;border-bottom:2px solid #b8e8d4">المتوسط%</th>'
+    +'<th style="padding:7px 10px;background:#e8faf3;color:#1a8f63;border-bottom:2px solid #b8e8d4">التقييم</th>'
+    +'</tr></thead><tbody>';
+  var chartData=[];
+  related.forEach(function(s,i){
+    var qs=s.questions||[];var tM=qs.reduce(function(a,q){return a+q.maxMark;},0);
+    var allSts=[];Object.keys(s.classes||{}).forEach(function(k){allSts=allSts.concat(s.classes[k].students||[]);});
+    var n=allSts.length;
+    var avg=n?Math.round(allSts.reduce(function(a,st){var tot=qs.reduce(function(s2,q,qi){return s2+(parseFloat(st.grades&&st.grades['q'+qi])||0);},0);return a+tot;},0)/n*10)/10:0;
+    var pct=tM?Math.round(avg/tM*100):0;
+    var col=pct>=(PASSING_PCT+20)?'#2ecc8f':pct>=PASSING_PCT?'#f5c842':'#ff6b9d';
+    chartData.push({label:s.semester||('جلسة '+(i+1)),pct:pct,col:col,n:n,teacher:s.teacherName,date:s.savedAt?new Date(s.savedAt).toLocaleDateString('ar-SA'):''});
+    var bgRow=i%2===0?'#f7fdf9':'#fff';
+    h+='<tr style="background:'+bgRow+'">'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #edf8f3;font-weight:600">'+(s.teacherName||'—')+'<br><span style="font-size:10px;color:#6b9980">'+(s.savedAt?new Date(s.savedAt).toLocaleDateString('ar-SA'):'')+'</span></td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #edf8f3;text-align:center">'+(s.semester||'—')+'</td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #edf8f3;text-align:center">'+n+'</td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #edf8f3;text-align:center;font-weight:700;color:'+col+'">'+pct+'%</td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #edf8f3;text-align:center">'+evalStr(pct)+'</td>'
+      +'</tr>';
+  });
+  h+='</tbody></table></div>';
+  /* simple SVG bar chart */
+  var W=480,H=160,pad=40,bW=Math.min(50,Math.floor((W-pad*2)/chartData.length)-8);
+  h+='<div style="margin-top:16px;overflow-x:auto"><svg viewBox="0 0 '+W+' '+H+'" width="100%" style=\"font-family:Segoe UI,sans-serif;direction:ltr\">';
+  /* grid */
+  [0,25,50,75,100].forEach(function(g){
+    var y=pad+(H-pad*1.5)*(1-g/100);
+    h+='<line x1="'+pad+'" y1="'+y+'" x2="'+(W-10)+'" y2="'+y+'" stroke="#e0f0e8" stroke-width="1"/>';
+    h+='<text x="'+(pad-4)+'" y="'+(y+4)+'" text-anchor="end" font-size="8" fill="#6b9980">'+g+'%</text>';
+  });
+  /* passing line */
+  var passY=pad+(H-pad*1.5)*(1-PASSING_PCT/100);
+  h+='<line x1="'+pad+'" y1="'+passY+'" x2="'+(W-10)+'" y2="'+passY+'" stroke="#f5c842" stroke-width="1.5" stroke-dasharray="4,3"/>';
+  h+='<text x="'+(W-8)+'" y="'+(passY-3)+'" font-size="8" fill="#7a5e00" text-anchor="end">حد النجاح</text>';
+  /* bars */
+  chartData.forEach(function(d,i){
+    var x=pad+i*(bW+8)+(W-pad*2-(chartData.length*(bW+8)-8))/2;
+    var bH=Math.max((H-pad*1.5)*d.pct/100,2);
+    var y=(H-pad*0.5)-bH;
+    h+='<rect x="'+x+'" y="'+y+'" width="'+bW+'" height="'+bH+'" rx="3" fill="'+d.col+'" opacity="0.85"/>';
+    h+='<text x="'+(x+bW/2)+'" y="'+(y-3)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="'+d.col+'">'+d.pct+'%</text>';
+    h+='<text x="'+(x+bW/2)+'" y="'+(H-pad*0.5+12)+'" text-anchor="middle" font-size="8" fill="#4a7a60">'+d.label+'</text>';
+  });
+  h+='</svg></div>';
+  content.innerHTML=h;
+  document.getElementById('compareModal').classList.add('open');
+}
+function closeCompareModal(){document.getElementById('compareModal').classList.remove('open');}
+
+function syncSheets(){
+  var payload={platform:'بصيرة وبوصلة',teacher:gv('teacherName'),subject:gv('subject'),semester:gv('semester'),year:gv('year'),timestamp:new Date().toISOString()};
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(){}).catch(function(){});
+}
+</script>
+</body>
+</html>
