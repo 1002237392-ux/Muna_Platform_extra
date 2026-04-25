@@ -185,6 +185,10 @@ body{font-family:'Segoe UI',Tahoma,'Arial Unicode MS',Arial,sans-serif;direction
 .ai-inp.num{width:70px;text-align:center}
 .ai-loading{display:flex;align-items:center;gap:10px;padding:18px;background:#eaf6ff;border-radius:11px;font-size:13px;color:#1a6fa5;font-weight:600}
 .section-hidden{display:none}
+/* Mode tab active state */
+#modeTabAI{background:#5bb8f5;color:#fff;border-color:#5bb8f5}
+#modeTabManual{border-color:#9b7fe8;color:#6344b8}
+#modeTabClaudeInline{border-color:#cc785c;color:#8a4a2a}
 /* ── SAVE BANNER ── */
 .save-banner{background:#e8faf3;border:1px solid #b8e8d4;border-radius:12px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .save-info{font-size:12px;color:#1a8f63;font-weight:600;display:flex;align-items:center;gap:6px}
@@ -537,7 +541,7 @@ body.dark .apikey-inp:focus{background:#1e3328}
 <div class="screen active" id="screenLanding" style="flex-direction:row">
   <div class="landing">
     <div class="landing-card">
-      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="landing-logo" onerror="this.style.display='none'"/>
+      <img src="https://i.postimg.cc/G3ghK9PH/sml-byt-hspr.png" class="landing-logo" onerror="this.style.display='none'"/>
       <div class="landing-title">منصة التقييم الذكي</div>
       <div class="landing-sub">بصيرة وبوصلة — مدرسة البخاري الشاملة</div>
       <div style="font-size:12px;color:#2ecc8f;font-weight:700;margin-top:-18px;margin-bottom:18px;background:#e8faf3;border-radius:8px;padding:5px 12px;border:1px solid #b8e8d4">إدارة المنصة: مركزة التقييم منى مصطفى</div>
@@ -588,7 +592,7 @@ body.dark .apikey-inp:focus{background:#1e3328}
 <div class="screen" id="screenTeacher">
   <div class="header">
     <div class="hdr-inner">
-      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="hdr-logo" onerror="this.style.display='none'"/>
+      <img src="https://i.postimg.cc/G3ghK9PH/sml-byt-hspr.png" class="hdr-logo" onerror="this.style.display='none'"/>
       <div class="hdr-txt">
         <h1>منصة التقييم الذكي: بصيرة وبوصلة</h1>
         <div class="hdr-sub">مدرسة البخاري الشاملة</div>
@@ -603,6 +607,7 @@ body.dark .apikey-inp:focus{background:#1e3328}
         <button class="btn-hdr gold" onclick="saveSession()" id="hBtnSave">💾 حفظ</button>
         <button class="btn-hdr" onclick="exportPDF()" id="hBtnPdf">📥 PDF</button>
         <button class="btn-hdr xl" onclick="exportExcel()">📊 Excel</button>
+        <button class="btn-hdr" onclick="openExamLibrary()" style="border-color:rgba(155,127,232,.8);background:rgba(155,127,232,.25)">📚 المكتبة</button>
         <button class="btn-hdr solid" id="hBtnSend" onclick="openSendModal()">🚀 إرسال للمركزة</button>
         <button class="btn-hdr" onclick="goLanding()" style="border-color:rgba(255,255,255,.4)">← خروج</button>
       </div>
@@ -694,36 +699,132 @@ body.dark .apikey-inp:focus{background:#1e3328}
 
         <!-- ═══ AI GUIDE + PASTE SYSTEM ═══ -->
         <div class="card" id="cardAiGuide">
-          <div class="card-title" style="color:#1a6fa5">🤖 تحليل الامتحان عبر الذكاء الاصطناعي</div>
+          <div class="card-title" style="color:#1a6fa5">🤖 بناء هيكل الامتحان — اختر الطريقة</div>
 
-          <!-- STEP 1: Copy Prompt -->
-          <div class="ai-step" id="aiStep1">
-            <div class="ai-step-hdr"><span class="ai-step-num">١</span><span class="ai-step-ttl">انسخ البرومبت المناسب لمادتك</span></div>
-            <div id="promptBox" style="background:#f7fdf9;border:1.5px solid #c8e8d8;border-radius:11px;padding:14px 16px;font-size:12px;line-height:1.9;color:#1a2e22;direction:rtl;white-space:pre-wrap;max-height:220px;overflow-y:auto;margin:10px 0" id="generatedPrompt">اختر المادة أعلاه أولاً لعرض البرومبت</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button class="btn btn-mint btn-sm" onclick="copyPrompt()" id="btnCopyPrompt" disabled>📋 نسخ البرومبت</button>
-              <a id="btnOpenAI" href="https://chat.openai.com" target="_blank" class="btn btn-sm" style="background:#10a37f;color:#fff;border-color:#10a37f;text-decoration:none">🌐 ChatGPT</a>
-              <a href="https://claude.ai" target="_blank" class="btn btn-sm" style="background:#cc785c;color:#fff;border-color:#cc785c;text-decoration:none">🤖 Claude</a>
-              <a href="https://gemini.google.com" target="_blank" class="btn btn-sm" style="background:#4285f4;color:#fff;border-color:#4285f4;text-decoration:none">✦ Gemini</a>
+          <!-- METHOD TABS -->
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-sky btn-sm" id="modeTabAI" onclick="switchInputMode('ai')" style="font-weight:700">🤖 عبر الذكاء الاصطناعي</button>
+            <button class="btn btn-sm" id="modeTabManual" onclick="switchInputMode('manual')" style="border-color:#9b7fe8;color:#6344b8">✏️ إدخال يدوي</button>
+            <button class="btn btn-sm" id="modeTabClaudeInline" onclick="switchInputMode('claudeinline')" style="border-color:#cc785c;color:#8a4a2a">⚡ Claude مباشرة</button>
+          </div>
+
+          <!-- MODE: AI (copy prompt + paste) -->
+          <div id="modeAI">
+            <!-- STEP 1: Copy Prompt -->
+            <div class="ai-step" id="aiStep1">
+              <div class="ai-step-hdr"><span class="ai-step-num">١</span><span class="ai-step-ttl">انسخ البرومبت المناسب لمادتك</span></div>
+              <div id="promptTopInfo" style="font-size:11px;color:#6b9980;margin:4px 0 8px">اختر المادة أعلاه أولاً لتخصيص البرومبت</div>
+              <!-- Extra context fields -->
+              <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+                <input id="promptUnit" placeholder="الوحدة / الموضوع (اختياري)" style="flex:1;min-width:140px;padding:6px 10px;border:1.5px solid #c8e8d8;border-radius:8px;font-family:inherit;font-size:12px;background:#f7fdf9;color:#1a2e22"/>
+                <input id="promptGrade" placeholder="الصف (مثال: السابع)" style="flex:1;min-width:120px;padding:6px 10px;border:1.5px solid #c8e8d8;border-radius:8px;font-family:inherit;font-size:12px;background:#f7fdf9;color:#1a2e22"/>
+                <button class="btn btn-sm" onclick="updatePromptForSubject(currentSubject)" style="white-space:nowrap">🔄 تحديث</button>
+              </div>
+              <div id="promptBox" style="background:#f7fdf9;border:1.5px solid #c8e8d8;border-radius:11px;padding:14px 16px;font-size:12px;line-height:1.9;color:#1a2e22;direction:rtl;white-space:pre-wrap;max-height:220px;overflow-y:auto;margin:10px 0">اختر المادة أعلاه أولاً لعرض البرومبت</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <button class="btn btn-mint btn-sm" onclick="copyPrompt()" id="btnCopyPrompt" disabled>📋 نسخ البرومبت</button>
+                <a id="btnOpenAI" href="https://chat.openai.com" target="_blank" class="btn btn-sm" style="background:#10a37f;color:#fff;border-color:#10a37f;text-decoration:none">🌐 ChatGPT</a>
+                <a href="https://claude.ai" target="_blank" class="btn btn-sm" style="background:#cc785c;color:#fff;border-color:#cc785c;text-decoration:none">🤖 Claude</a>
+                <a href="https://gemini.google.com" target="_blank" class="btn btn-sm" style="background:#4285f4;color:#fff;border-color:#4285f4;text-decoration:none">✦ Gemini</a>
+              </div>
+            </div>
+            <!-- DIVIDER -->
+            <div style="border-top:1px dashed #d4f0e4;margin:16px 0"></div>
+            <!-- STEP 2: Paste Table -->
+            <div class="ai-step" id="aiStep2">
+              <div class="ai-step-hdr"><span class="ai-step-num">٢</span><span class="ai-step-ttl">الصق جدول الذكاء الاصطناعي هنا</span></div>
+              <div style="font-size:11px;color:#6b9980;margin:6px 0 10px">بعد تحليل الامتحان، انسخ الجدول كاملاً من موقع الذكاء الاصطناعي والصقه هنا</div>
+              <textarea id="aiPasteArea" rows="7" dir="auto"
+                style="width:100%;padding:10px 13px;border:1.5px solid #b8d8f4;border-radius:11px;background:#f7fbff;color:#1a2e22;font-family:inherit;font-size:12px;resize:vertical;line-height:1.7"
+                placeholder="الصق الجدول هنا..."
+                oninput="onPasteAreaInput()"></textarea>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn btn-mint" onclick="parseAndApplyTable()" id="btnParseTable">✅ تحليل الجدول وبناء نموذج المسح</button>
+                <button class="btn btn-sm" onclick="clearPasteArea()">🗑️ مسح</button>
+              </div>
+              <div id="parseStatus" style="display:none;margin-top:10px;font-size:12px;padding:9px 13px;border-radius:9px"></div>
             </div>
           </div>
 
-          <!-- DIVIDER -->
-          <div style="border-top:1px dashed #d4f0e4;margin:16px 0"></div>
-
-          <!-- STEP 2: Paste Table -->
-          <div class="ai-step" id="aiStep2">
-            <div class="ai-step-hdr"><span class="ai-step-num">٢</span><span class="ai-step-ttl">الصق جدول الذكاء الاصطناعي هنا</span></div>
-            <div style="font-size:11px;color:#6b9980;margin:6px 0 10px">بعد تحليل الامتحان، انسخ الجدول كاملاً من موقع الذكاء الاصطناعي والصقه هنا</div>
-            <textarea id="aiPasteArea" rows="7" dir="auto"
-              style="width:100%;padding:10px 13px;border:1.5px solid #b8d8f4;border-radius:11px;background:#f7fbff;color:#1a2e22;font-family:inherit;font-size:12px;resize:vertical;line-height:1.7"
-              placeholder="الصق الجدول هنا...&#10;&#10;مثال:&#10;القسم	رقم السؤال	המיומנות	רמת בלום	ניקוד&#10;أ	1	הבנת הנקרא	הבנה	5&#10;أ	2	דקדוק	יישום	3"
-              oninput="onPasteAreaInput()"></textarea>
-            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-              <button class="btn btn-mint" onclick="parseAndApplyTable()" id="btnParseTable">✅ تحليل الجدول وبناء نموذج المسح</button>
-              <button class="btn btn-sm" onclick="clearPasteArea()">🗑️ مسح</button>
+          <!-- MODE: MANUAL INPUT -->
+          <div id="modeManual" style="display:none">
+            <div style="font-size:12px;color:#6344b8;background:#f3efff;border:1px solid #c8b8f0;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+              <span style="font-size:18px">✏️</span>
+              <span>أدخل المهارات والأسئلة يدوياً — سجّل مهاراتك ثم أضف الأسئلة وربطها بكل مهارة</span>
             </div>
-            <div id="parseStatus" style="display:none;margin-top:10px;font-size:12px;padding:9px 13px;border-radius:9px"></div>
+
+            <!-- ── SKILLS SECTION ── -->
+            <div style="background:#fff;border:1.5px solid #b8e8d4;border-radius:13px;padding:14px 16px;margin-bottom:14px">
+              <div style="font-size:13px;font-weight:800;color:#1a8f63;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+                <span style="background:#e8faf3;border-radius:8px;padding:3px 9px;font-size:12px">📌</span> المهارات المُقيَّمة
+              </div>
+
+              <!-- Add skill row -->
+              <div style="display:flex;gap:7px;margin-bottom:10px">
+                <input id="manualSkillInput"
+                  placeholder="اكتب اسم المهارة ثم اضغط Enter أو زر إضافة..."
+                  style="flex:1;padding:9px 13px;border:2px solid #c8e8d8;border-radius:10px;font-family:inherit;font-size:13px;background:#f7fdf9;color:#1a2e22;transition:border-color .15s"
+                  onfocus="this.style.borderColor='#2ecc8f';this.style.background='#fff'"
+                  onblur="this.style.borderColor='#c8e8d8';this.style.background='#f7fdf9'"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();addManualSkill();}"/>
+                <button class="btn btn-mint" onclick="addManualSkill()" style="white-space:nowrap;padding:9px 16px;font-size:13px">＋ إضافة</button>
+              </div>
+
+              <!-- Added skills tags -->
+              <div id="manualSkillsTagsArea" style="display:flex;flex-wrap:wrap;gap:7px;min-height:32px;margin-bottom:10px">
+                <span id="manualSkillsEmpty" style="font-size:12px;color:#b0c8bc;font-style:italic">لا مهارات مضافة بعد — ابدأ بكتابة مهارة أعلاه</span>
+              </div>
+
+              <!-- Quick skill bank by subject -->
+              <div id="quickSkillBank" style="display:none;border-top:1px dashed #d4f0e4;padding-top:10px;margin-top:4px">
+                <div style="font-size:11px;color:#6b9980;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px">
+                  <span>⚡</span> مهارات جاهزة للمادة المختارة — اضغط لإضافتها:
+                </div>
+                <div id="quickSkillBankTags" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+              </div>
+            </div>
+
+            <!-- ── QUESTIONS SECTION ── -->
+            <div style="background:#fff;border:1.5px solid #b8d8f4;border-radius:13px;padding:14px 16px;margin-bottom:14px">
+              <div style="font-size:13px;font-weight:800;color:#1a6fa5;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap">
+                <span style="display:flex;align-items:center;gap:7px">
+                  <span style="background:#eaf6ff;border-radius:8px;padding:3px 9px;font-size:12px">📝</span> الأسئلة
+                </span>
+                <button class="btn btn-sm" onclick="addManualQuestion()" style="border-color:#5bb8f5;color:#1a6fa5;font-weight:700">＋ إضافة سؤال</button>
+              </div>
+              <div id="manualQuestionsList" style="display:flex;flex-direction:column;gap:8px">
+                <span id="manualQsEmpty" style="font-size:12px;color:#b0c8bc;font-style:italic">لا أسئلة بعد — أضف مهارة أولاً ثم اضغط "إضافة سؤال"</span>
+              </div>
+            </div>
+
+            <!-- Apply button -->
+            <button class="btn btn-mint" onclick="applyManualInput()" style="width:100%;padding:12px;font-size:14px;font-weight:800;border-radius:12px">
+              ✅ تطبيق وبناء نموذج العلامات
+            </button>
+          </div>
+
+          <!-- MODE: CLAUDE INLINE -->
+          <div id="modeClaudeInline" style="display:none">
+            <div style="font-size:12px;color:#8a4a2a;background:#fff3ee;border:1px solid #f5c4b3;border-radius:10px;padding:10px 14px;margin-bottom:14px">
+              ⚡ أدخل وصف الامتحان وسيقوم Claude بإنشاء جدول المهارات والأسئلة مباشرةً
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div>
+                <label style="font-size:11px;color:#6b9980;font-weight:700;display:block;margin-bottom:4px">وصف الامتحان أو أسئلته</label>
+                <textarea id="claudeInlineInput" rows="6" dir="auto"
+                  style="width:100%;padding:10px 13px;border:1.5px solid #f5c4b3;border-radius:11px;background:#fff8f5;color:#1a2e22;font-family:inherit;font-size:13px;resize:vertical;line-height:1.7"
+                  placeholder="مثال: امتحان اللغة العربية للصف السابع — وحدة النص السردي. يتضمن: &#10;- قراءة نص وإجابة أسئلة فهم (10 نقاط) &#10;- تحليل صرفي ونحوي (8 نقاط) &#10;- كتابة فقرة إبداعية (7 نقاط)"></textarea>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn btn-sm" onclick="generateClaudeTable()" id="btnClaudeGenerate" style="background:#cc785c;color:#fff;border-color:#cc785c;font-weight:700">⚡ توليد الجدول بـ Claude</button>
+                <div id="claudeInlineStatus" style="font-size:12px;color:#6b9980"></div>
+              </div>
+              <div id="claudeInlineResult" style="display:none">
+                <div style="font-size:11px;color:#1a8f63;font-weight:700;margin-bottom:6px">📊 الجدول المُنشأ — راجع وعدّل:</div>
+                <div id="claudeTablePreviewWrap"></div>
+                <button class="btn btn-mint" style="margin-top:10px" onclick="applyClaudeInlineTable()">✅ تطبيق الجدول</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -742,7 +843,10 @@ body.dark .apikey-inp:focus{background:#1e3328}
         <div class="card" id="cardQuestions" style="display:none">
           <div class="card-title" id="cQs">📝 الأسئلة والمهارات — جاهز للعلامات</div>
           <div class="q-list" id="qList"><p style="font-size:12px;color:#6b9980" id="noQs">لا أسئلة بعد.</p></div>
-          <button class="btn btn-sm btn-mint" style="margin-top:11px" onclick="addQ()" id="btnAddQ">+ إضافة سؤال يدوياً</button>
+          <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-mint" onclick="addQ()" id="btnAddQ">+ إضافة سؤال</button>
+            <button class="btn btn-sm" onclick="saveExamTemplate()" style="border-color:#9b7fe8;color:#6344b8">📚 حفظ كقالب</button>
+          </div>
         </div>
 
         <!-- hidden skills list (still needed internally) -->
@@ -750,7 +854,10 @@ body.dark .apikey-inp:focus{background:#1e3328}
         <div class="card">
           <div class="card-title" id="cCls">🏫 الصفوف الدراسية</div>
           <div id="clsSummary"><p style="font-size:12px;color:#6b9980" id="noCls">لا صفوف مضافة.</p></div>
-          <button class="btn btn-mint" style="margin-top:12px" onclick="openClsModal()" id="btnAddCls">+ إضافة صف جديد</button>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn btn-mint" onclick="openClsModal()" id="btnAddCls">+ إضافة صف جديد</button>
+            <button class="btn btn-sm" onclick="openCopyToClassesModal()" style="border-color:#5bb8f5;color:#1a6fa5" id="btnCopyClasses">📋 نسخ لفصول متعددة</button>
+          </div>
         </div>
       </div>
 
@@ -788,6 +895,7 @@ body.dark .apikey-inp:focus{background:#1e3328}
           <button class="btn btn-sm" onclick="exportPDF()" id="aBtnPdf">📥 PDF</button>
           <button class="btn btn-sm" style="background:#1D6F42;color:#fff;border-color:#1D6F42" onclick="exportExcel()">📊 Excel</button>
           <button class="btn btn-sm btn-sky" onclick="openCompareModal()">📈 مقارنة الفصول</button>
+          <button class="btn btn-sm" onclick="openInterventionPrompt()" style="background:#9b7fe8;color:#fff;border-color:#9b7fe8">🎯 برومبت خطة التدخل</button>
           <button class="btn btn-mint btn-sm" id="aBtnSend" onclick="openSendModal()">🚀 إرسال للمركزة</button>
         </div>
         <div id="analysisContent"></div>
@@ -809,7 +917,7 @@ body.dark .apikey-inp:focus{background:#1e3328}
 <div class="screen" id="screenAdmin">
   <div class="header">
     <div class="hdr-inner">
-      <img src="https://i.postimg.cc/BvWRyPMg/IMG-20260330-WA0066.jpg" class="hdr-logo" onerror="this.style.display='none'"/>
+      <img src="https://i.postimg.cc/G3ghK9PH/sml-byt-hspr.png" class="hdr-logo" onerror="this.style.display='none'"/>
       <div class="hdr-txt">
         <h1>🔑 لوحة إدارة مركزة التقييم</h1>
         <div class="hdr-sub">منصة التقييم الذكي: بصيرة وبوصلة</div>
@@ -938,6 +1046,50 @@ body.dark .apikey-inp:focus{background:#1e3328}
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button class="btn btn-sm" onclick="closeChangePwModal()">إلغاء</button>
       <button class="btn btn-sm" style="background:#6344b8;color:#fff;border-color:#6344b8" onclick="doChangePw()">✓ تغيير كلمة السر</button>
+    </div>
+  </div>
+</div>
+
+<!-- COPY TO CLASSES MODAL -->
+<div class="modal-overlay" id="copyClsModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hdr"><span>📋 نسخ نموذج الامتحان لفصول متعددة</span><span class="modal-x" onclick="document.getElementById('copyClsModal').classList.remove('open')">×</span></div>
+    <div style="font-size:12px;color:#6b9980;margin-bottom:14px">سيتم تطبيق نفس هيكل الأسئلة والمهارات على كل الصفوف التي تُدخلها</div>
+    <div id="copyClsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
+    <div style="display:flex;gap:7px;margin-bottom:14px">
+      <input id="newCopyClsName" placeholder="اسم الصف (مثال: السابع أ)" style="flex:1;padding:8px 12px;border:1.5px solid #c8e8d8;border-radius:9px;font-family:inherit;font-size:13px;background:#f7fdf9;color:#1a2e22" onkeydown="if(event.key==='Enter')addCopyClsRow()"/>
+      <button class="btn btn-sm btn-mint" onclick="addCopyClsRow()">+ إضافة</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-sm" onclick="document.getElementById('copyClsModal').classList.remove('open')">إلغاء</button>
+      <button class="btn btn-mint btn-sm" onclick="applyCopyClasses()">✅ إنشاء الصفوف</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM LIBRARY MODAL -->
+<div class="modal-overlay" id="examLibraryModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-hdr"><span>📚 مكتبة قوالب الامتحانات</span><span class="modal-x" onclick="document.getElementById('examLibraryModal').classList.remove('open')">×</span></div>
+    <div style="font-size:12px;color:#6b9980;margin-bottom:12px">القوالب المحفوظة — يمكن إعادة استخدامها في فصول أو سنوات دراسية مختلفة</div>
+    <div id="examLibraryList" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto"></div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end">
+      <button class="btn btn-sm" onclick="document.getElementById('examLibraryModal').classList.remove('open')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTERVENTION PROMPT MODAL -->
+<div class="modal-overlay" id="interventionModal">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr"><span>🎯 برومبت خطة التدخل الفردية</span><span class="modal-x" onclick="document.getElementById('interventionModal').classList.remove('open')">×</span></div>
+    <div style="font-size:12px;color:#6b9980;margin-bottom:12px">برومبت جاهز يتضمن نتائج التحليل — الصقه في Claude أو ChatGPT للحصول على خطة تدخل تدريسية مخصصة</div>
+    <div id="interventionPromptBox" style="background:#f3efff;border:1.5px solid #c8b8f0;border-radius:11px;padding:14px 16px;font-size:12px;line-height:1.9;color:#1a2e22;direction:rtl;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm" style="background:#9b7fe8;color:#fff;border-color:#9b7fe8" onclick="copyInterventionPrompt()">📋 نسخ البرومبت</button>
+      <a href="https://claude.ai" target="_blank" class="btn btn-sm" style="background:#cc785c;color:#fff;border-color:#cc785c;text-decoration:none">🤖 Claude</a>
+      <a href="https://chat.openai.com" target="_blank" class="btn btn-sm" style="background:#10a37f;color:#fff;border-color:#10a37f;text-decoration:none">🌐 ChatGPT</a>
+      <button class="btn btn-sm" onclick="document.getElementById('interventionModal').classList.remove('open')">إغلاق</button>
     </div>
   </div>
 </div>
@@ -1563,7 +1715,11 @@ function rmSkill(i){S.skills.splice(i,1);renderSkills();}
    QUESTIONS
 ════════════════════════════════════════ */
 function addQ(){
-  if(!S.skills.length){toast('طبّق جدول الذكاء الاصطناعي أولاً','w');return;}
+  if(!S.skills.length){
+    /* auto-add a generic skill if none exist */
+    S.skills=['مهارة عامة'];
+    toast('تم إضافة مهارة افتراضية — يمكنك تعديلها','s',2500);
+  }
   qCount++;
   S.questions.push({text:'سؤال '+qCount,skill:0,bloom:2,maxMark:5});
   renderQs();
@@ -1626,8 +1782,8 @@ function updQSkill(sel,i){
 /* ════════════════════════════════════════
    CLASSES
 ════════════════════════════════════════ */
-function openClsModal(){
-  if(!S.questions.length){toast('أضف أسئلة أولاً','w');return;}
+function openClsModal(skipCheck){
+  if(!skipCheck && !S.questions.length){toast('أضف أسئلة أولاً','w');return;}
   document.getElementById('newClsName').value='';document.getElementById('newClsSt').value='';
   document.getElementById('clsModal').classList.add('open');
 }
@@ -3131,6 +3287,8 @@ function pickSubject(key){
   }
   /* generate prompt */
   updatePromptForSubject(key);
+  /* update manual mode quick skill bank */
+  renderQuickSkillBank();
 }
 
 /* ════════════════════════════════════════
@@ -3146,6 +3304,8 @@ function updatePromptForSubject(key){
   var sd=SUBJECT_DATA[key]||SUBJECT_DATA.other;
   var lang=getPromptLang(key);
   var subjectLabel=sd.label;
+  var unit=document.getElementById('promptUnit')?document.getElementById('promptUnit').value.trim():'';
+  var grade=document.getElementById('promptGrade')?document.getElementById('promptGrade').value.trim():'';
   var bloomsHe='זכירה (1) | הבנה (2) | יישום (3) | ניתוח (4) | הערכה (5) | יצירה (6)';
   var bloomsEn='Remembering (1) | Understanding (2) | Applying (3) | Analyzing (4) | Evaluating (5) | Creating (6)';
   var bloomsAr='تذكر (1) | فهم (2) | تطبيق (3) | تحليل (4) | تقييم (5) | تركيب (6)';
@@ -3161,7 +3321,7 @@ function updatePromptForSubject(key){
       +'- "Marks": the maximum marks for this question\n'
       +'- Return ONLY the table. No explanations before or after.\n'
       +'- Use tab characters between columns.\n\n'
-      +'Subject: '+subjectLabel;
+      +'Subject: '+subjectLabel+(grade?'\nGrade: '+grade:'')+(unit?'\nUnit/Topic: '+unit:'');
   } else {
     /* Hebrew for Arabic, Hebrew, Science, Math */
     var subjectInHebrew={'arabic':'ערבית','hebrew':'עברית','math':'מתמטיקה','science':'מדעים','other':'כללי'};
@@ -3175,7 +3335,7 @@ function updatePromptForSubject(key){
       +'- "ניקוד": הניקוד המרבי לשאלה זו\n'
       +'- החזר את הטבלה בלבד. ללא הסברים לפני או אחרי.\n'
       +'- השתמש בתווי טאב בין העמודות.\n\n'
-      +'מקצוע: '+subHe;
+      +'מקצוע: '+subHe+(grade?'\nשכבה/כיתה: '+grade:'')+(unit?'\nיחידה/נושא: '+unit:'');
   }
 
   var box=document.getElementById('promptBox');
@@ -3962,6 +4122,438 @@ function syncSheets(){
   var payload={platform:'بصيرة وبوصلة',teacher:gv('teacherName'),subject:gv('subject'),semester:gv('semester'),year:gv('year'),timestamp:new Date().toISOString()};
   fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(){}).catch(function(){});
 }
+
+/* ════════════════════════════════════════
+   INPUT MODE SWITCHER
+════════════════════════════════════════ */
+function switchInputMode(mode){
+  document.getElementById('modeAI').style.display='none';
+  document.getElementById('modeManual').style.display='none';
+  document.getElementById('modeClaudeInline').style.display='none';
+  document.getElementById('modeTab'+({'ai':'AI','manual':'Manual','claudeinline':'ClaudeInline'}[mode]||'AI')).classList.add('btn-sky');
+  document.getElementById('modeTab'+({'ai':'AI','manual':'Manual','claudeinline':'ClaudeInline'}[mode]||'AI')).classList.remove('btn-sm');
+  ['AI','Manual','ClaudeInline'].forEach(function(m){
+    var btn=document.getElementById('modeTab'+m);
+    if(!btn)return;
+    var isActive=(m.toLowerCase()===mode||m==='AI'&&mode==='ai'||m==='Manual'&&mode==='manual'||m==='ClaudeInline'&&mode==='claudeinline');
+    btn.style.background=isActive?'#5bb8f5':'';
+    btn.style.color=isActive?'#fff':m==='Manual'?'#6344b8':m==='ClaudeInline'?'#8a4a2a':'#1a6fa5';
+    btn.style.borderColor=isActive?'#5bb8f5':m==='Manual'?'#9b7fe8':m==='ClaudeInline'?'#cc785c':'#c8e8d8';
+  });
+  var modeDiv={'ai':'modeAI','manual':'modeManual','claudeinline':'modeClaudeInline'}[mode]||'modeAI';
+  document.getElementById(modeDiv).style.display='block';
+  /* Show quick skill bank if manual mode and subject selected */
+  if(mode==='manual')renderQuickSkillBank();
+}
+
+/* ════════════════════════════════════════
+   MANUAL INPUT MODE
+════════════════════════════════════════ */
+var manualSkills=[];
+var manualQuestions=[];
+
+function renderQuickSkillBank(){
+  var bank=document.getElementById('quickSkillBank');
+  var tags=document.getElementById('quickSkillBankTags');
+  if(!currentSubject||!SUBJECT_DATA[currentSubject]){if(bank)bank.style.display='none';return;}
+  var skills=SUBJECT_DATA[currentSubject].skills||[];
+  if(!skills.length){if(bank)bank.style.display='none';return;}
+  if(bank)bank.style.display='block';
+  if(tags)tags.innerHTML=skills.map(function(s){
+    var added=manualSkills.indexOf(s)>=0;
+    return'<span onclick="'+(added?'':'quickAddSkill(\''+s.replace(/'/g,"\\'")+'\')')+'" '
+      +'style="cursor:'+(added?'default':'pointer')+';padding:4px 11px;'
+      +'background:'+(added?'#2ecc8f':'#f3efff')+';'
+      +'border:1.5px solid '+(added?'#2ecc8f':'#c8b8f0')+';'
+      +'border-radius:12px;font-size:11px;color:'+(added?'#fff':'#6344b8')+';font-weight:600;'
+      +'transition:all .15s;display:inline-flex;align-items:center;gap:4px">'
+      +(added?'✓ ':'')
+      +s+'</span>';
+  }).join('');
+}
+
+function quickAddSkill(name){
+  if(manualSkills.indexOf(name)>=0){toast('المهارة موجودة بالفعل ✓','w');return;}
+  manualSkills.push(name);
+  renderManualSkills();
+  /* mark the tag as added in the quick bank */
+  renderQuickSkillBank();
+  toast('✅ '+name,'s',1500);
+}
+
+function addManualSkill(){
+  var inp=document.getElementById('manualSkillInput');
+  var val=inp.value.trim();
+  if(!val){inp.focus();toast('اكتب اسم المهارة أولاً','w');return;}
+  if(manualSkills.indexOf(val)>=0){toast('هذه المهارة موجودة بالفعل','w');inp.select();return;}
+  manualSkills.push(val);
+  inp.value='';
+  inp.focus();
+  renderManualSkills();
+  toast('✅ تمت إضافة المهارة: '+val,'s',1800);
+}
+
+function renderManualSkills(){
+  var tagsArea=document.getElementById('manualSkillsTagsArea');
+  var emptyMsg=document.getElementById('manualSkillsEmpty');
+  if(!tagsArea)return;
+
+  /* Remove all existing tags (not the empty span) */
+  Array.from(tagsArea.children).forEach(function(c){
+    if(c.id!=='manualSkillsEmpty')c.remove();
+  });
+
+  if(!manualSkills.length){
+    if(emptyMsg)emptyMsg.style.display='';
+    renderManualQuestions();
+    return;
+  }
+  if(emptyMsg)emptyMsg.style.display='none';
+
+  var colors=[
+    {bg:'#e8faf3',col:'#1a8f63',border:'#b8e8d4'},
+    {bg:'#eaf6ff',col:'#1a6fa5',border:'#b8d8f4'},
+    {bg:'#f3efff',col:'#6344b8',border:'#c8b8f0'},
+    {bg:'#fff0eb',col:'#c05a30',border:'#f5c4b3'}
+  ];
+  manualSkills.forEach(function(s,i){
+    var c=colors[i%4];
+    var tag=document.createElement('div');
+    tag.style.cssText='display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 8px;background:'+c.bg+';border:1.5px solid '+c.border+';border-radius:18px;font-size:12px;font-weight:700;color:'+c.col;
+    tag.innerHTML='<span style="background:'+c.border+';color:'+c.col+';border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">'+(i+1)+'</span>'
+      +s
+      +'<span onclick="removeManualSkill('+i+')" style="cursor:pointer;font-size:15px;line-height:1;opacity:.6;margin-right:2px" title="حذف">×</span>';
+    tagsArea.appendChild(tag);
+  });
+  renderManualQuestions();
+}
+
+function removeManualSkill(i){
+  manualSkills.splice(i,1);
+  renderManualSkills();
+}
+
+function addManualQuestion(){
+  manualQuestions.push({text:'',skill:0,bloom:2,maxMark:5});
+  var emptyQ=document.getElementById('manualQsEmpty');
+  if(emptyQ)emptyQ.style.display='none';
+  renderManualQuestions();
+  /* scroll to bottom of questions list */
+  var el=document.getElementById('manualQuestionsList');
+  if(el)setTimeout(function(){el.lastElementChild&&el.lastElementChild.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+}
+
+function renderManualQuestions(){
+  var el=document.getElementById('manualQuestionsList');
+  var emptyQ=document.getElementById('manualQsEmpty');
+  if(!el)return;
+
+  if(!manualQuestions.length){
+    if(emptyQ)emptyQ.style.display='';
+    return;
+  }
+  if(emptyQ)emptyQ.style.display='none';
+
+  var bOpts=BLOOM_LEVELS.map(function(b){return'<option value="'+b.id+'">'+b.icon+' '+b.ar+'</option>';}).join('');
+  var skillOptsFn=function(selIdx){
+    if(!manualSkills.length)return'<option value="0">— أضف مهارة أولاً —</option>';
+    return manualSkills.map(function(s,si){return'<option value="'+si+'"'+(si===selIdx?' selected':'')+'>'+s+'</option>';}).join('');
+  };
+
+  el.innerHTML=manualQuestions.map(function(q,i){
+    var bloomOpts=BLOOM_LEVELS.map(function(b){return'<option value="'+b.id+'"'+(b.id===q.bloom?' selected':'')+'>'+b.icon+' '+b.ar+'</option>';}).join('');
+    return'<div style="display:flex;gap:7px;align-items:center;background:#f7fdf9;padding:9px 12px;border-radius:11px;border:1px solid #d4f0e4;flex-wrap:wrap">'
+      +'<span style="background:#e8faf3;color:#1a8f63;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:800;flex-shrink:0">س'+(i+1)+'</span>'
+      +'<input class="q-inp" style="min-width:130px;flex:2" value="'+escQ(q.text)+'" placeholder="نص السؤال أو وصفه (اختياري)" dir="auto" oninput="manualQuestions['+i+'].text=this.value"/>'
+      +'<select class="q-sel" style="min-width:140px;flex:1" onchange="manualQuestions['+i+'].skill=parseInt(this.value)">'+skillOptsFn(q.skill)+'</select>'
+      +'<select class="q-sel" style="min-width:120px" onchange="manualQuestions['+i+'].bloom=parseInt(this.value)">'+bloomOpts+'</select>'
+      +'<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'
+      +'<label style="font-size:11px;color:#6b9980">درجة:</label>'
+      +'<input class="q-mark" type="number" value="'+q.maxMark+'" min="1" style="width:58px" onchange="manualQuestions['+i+'].maxMark=Math.max(1,parseInt(this.value)||1);this.value=manualQuestions['+i+'].maxMark"/>'
+      +'</div>'
+      +'<button class="btn btn-xs btn-rose" onclick="manualQuestions.splice('+i+',1);renderManualQuestions()" title="حذف السؤال">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+function escQ(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+
+function applyManualInput(){
+  if(!manualSkills.length){toast('أضف مهارة واحدة على الأقل','w');return;}
+  if(!manualQuestions.length){toast('أضف سؤالاً واحداً على الأقل','w');return;}
+  S.skills=manualSkills.slice();
+  S.questions=manualQuestions.map(function(q){return{text:q.text||'سؤال',skill:q.skill,bloom:q.bloom,maxMark:q.maxMark};});
+  qCount=S.questions.length;
+  renderQs();
+  renderSkills();
+  document.getElementById('cardQuestions').style.display='block';
+  toast('✅ '+S.questions.length+' سؤال و'+S.skills.length+' مهارة — جاهز لإضافة الصفوف','s',3500);
+  setTimeout(function(){document.getElementById('cardQuestions').scrollIntoView({behavior:'smooth',block:'start'});},400);
+}
+
+/* ════════════════════════════════════════
+   CLAUDE INLINE GENERATION
+════════════════════════════════════════ */
+async function generateClaudeTable(){
+  var desc=document.getElementById('claudeInlineInput').value.trim();
+  if(!desc){toast('أدخل وصف الامتحان أولاً','w');return;}
+  var statusEl=document.getElementById('claudeInlineStatus');
+  var btn=document.getElementById('btnClaudeGenerate');
+  btn.disabled=true;btn.textContent='⏳ جارٍ التوليد...';
+  statusEl.textContent='يتواصل مع Claude...';
+  var subject=currentSubject?((SUBJECT_DATA[currentSubject]||{}).label||''):'';
+  var systemPrompt='أنت خبير تربوي. عندما يعطيك المستخدم وصفاً لامتحان، قم بإنشاء جدول JSON بالتنسيق التالي فقط، بدون أي نص آخر:\n{"rows":[{"section":"أ","num":"1","skill":"اسم المهارة","bloom":2,"marks":5},...]}';
+  var userPrompt='المادة: '+subject+'\nوصف الامتحان:\n'+desc+'\n\nأنشئ جدول الأسئلة والمهارات بتنسيق JSON المطلوب.';
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages:[{role:'user',content:userPrompt}]
+      })
+    });
+    var data=await resp.json();
+    var text=(data.content||[]).map(function(c){return c.text||'';}).join('');
+    /* parse JSON */
+    var clean=text.replace(/```json|```/g,'').trim();
+    var parsed=JSON.parse(clean);
+    var rows=parsed.rows||[];
+    if(!rows.length){toast('لم يُنشأ أي سؤال — أعد المحاولة','w');return;}
+    aiTableRows=rows;
+    /* render preview */
+    var previewHtml='<div style="overflow-x:auto"><table class="ai-table"><thead><tr>'
+      +'<th>القسم</th><th>السؤال</th><th>المهارة</th><th>بلوم</th><th>الدرجة</th><th></th></tr></thead><tbody>';
+    rows.forEach(function(r,i){
+      previewHtml+='<tr>'
+        +'<td><input class="ai-inp" value="'+(r.section||'')+'" onchange="aiTableRows['+i+'].section=this.value"/></td>'
+        +'<td><input class="ai-inp" value="'+(r.num||'')+'" onchange="aiTableRows['+i+'].num=this.value"/></td>'
+        +'<td><input class="ai-inp" value="'+(r.skill||'')+'" onchange="aiTableRows['+i+'].skill=this.value"/></td>'
+        +'<td><input class="ai-inp num" type="number" min="1" max="6" value="'+(r.bloom||2)+'" onchange="aiTableRows['+i+'].bloom=parseInt(this.value)"/></td>'
+        +'<td><input class="ai-inp num" type="number" min="1" value="'+(r.marks||5)+'" onchange="aiTableRows['+i+'].marks=parseInt(this.value)"/></td>'
+        +'<td><button class="btn btn-xs btn-rose" onclick="aiTableRows.splice('+i+',1);renderClaudePreview()">×</button></td>'
+        +'</tr>';
+    });
+    previewHtml+='</tbody></table></div>';
+    document.getElementById('claudeTablePreviewWrap').innerHTML=previewHtml;
+    document.getElementById('claudeInlineResult').style.display='block';
+    statusEl.textContent='✅ '+rows.length+' سؤال — راجع وعدّل ثم اضغط تطبيق';
+    statusEl.style.color='#1a8f63';
+  }catch(err){
+    statusEl.textContent='⚠️ خطأ: '+err.message;
+    statusEl.style.color='#c04060';
+    toast('تعذّر التوليد: '+err.message,'e',4000);
+  }finally{
+    btn.disabled=false;btn.textContent='⚡ توليد الجدول بـ Claude';
+  }
+}
+
+function renderClaudePreview(){
+  /* re-render the claude inline table preview */
+  var rows=aiTableRows;
+  var previewHtml='<div style="overflow-x:auto"><table class="ai-table"><thead><tr>'
+    +'<th>القسم</th><th>السؤال</th><th>المهارة</th><th>بلوم</th><th>الدرجة</th><th></th></tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    previewHtml+='<tr>'
+      +'<td><input class="ai-inp" value="'+(r.section||'')+'" onchange="aiTableRows['+i+'].section=this.value"/></td>'
+      +'<td><input class="ai-inp" value="'+(r.num||'')+'" onchange="aiTableRows['+i+'].num=this.value"/></td>'
+      +'<td><input class="ai-inp" value="'+(r.skill||'')+'" onchange="aiTableRows['+i+'].skill=this.value"/></td>'
+      +'<td><input class="ai-inp num" type="number" min="1" max="6" value="'+(r.bloom||2)+'" onchange="aiTableRows['+i+'].bloom=parseInt(this.value)"/></td>'
+      +'<td><input class="ai-inp num" type="number" min="1" value="'+(r.marks||5)+'" onchange="aiTableRows['+i+'].marks=parseInt(this.value)"/></td>'
+      +'<td><button class="btn btn-xs btn-rose" onclick="aiTableRows.splice('+i+',1);renderClaudePreview()">×</button></td>'
+      +'</tr>';
+  });
+  previewHtml+='</tbody></table></div>';
+  document.getElementById('claudeTablePreviewWrap').innerHTML=previewHtml;
+}
+
+function applyClaudeInlineTable(){
+  if(!aiTableRows.length){toast('لا بيانات لتطبيقها','w');return;}
+  applyAiTable();
+  document.getElementById('claudeInlineResult').style.display='none';
+}
+
+/* ════════════════════════════════════════
+   EXAM TEMPLATE LIBRARY
+════════════════════════════════════════ */
+function saveExamTemplate(){
+  if(!S.skills.length||!S.questions.length){toast('أضف مهارات وأسئلة أولاً','w');return;}
+  var name=gv('subject')||'قالب';
+  var label=prompt('اسم القالب:', name+' — '+(gv('year')||new Date().getFullYear()));
+  if(!label)return;
+  var templates=[];
+  try{templates=JSON.parse(localStorage.getItem('baseeraTemplates')||'[]');}catch(e){}
+  templates.push({
+    id:Date.now(),
+    label:label,
+    subject:gv('subject'),
+    skills:S.skills.slice(),
+    questions:S.questions.map(function(q){return Object.assign({},q);}),
+    savedAt:new Date().toISOString()
+  });
+  try{localStorage.setItem('baseeraTemplates',JSON.stringify(templates));}catch(e){toast('تعذر الحفظ','e');return;}
+  toast('✅ تم حفظ القالب "'+label+'"','s',3000);
+}
+
+function openExamLibrary(){
+  var templates=[];
+  try{templates=JSON.parse(localStorage.getItem('baseeraTemplates')||'[]');}catch(e){}
+  var el=document.getElementById('examLibraryList');
+  if(!templates.length){
+    el.innerHTML='<div class="empty"><div style="font-size:36px">📚</div><p>لا قوالب محفوظة بعد.<br><span style="font-size:12px;color:#6b9980">احفظ امتحاناً كقالب من زر "حفظ كقالب" في قسم الأسئلة</span></p></div>';
+  } else {
+    el.innerHTML=templates.map(function(t,i){
+      return'<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#f7fdf9;border:1px solid #d4f0e4;border-radius:11px">'
+        +'<div style="flex:1">'
+        +'<div style="font-size:13px;font-weight:700;color:#1a2e22">'+t.label+'</div>'
+        +'<div style="font-size:11px;color:#6b9980;margin-top:2px">'+t.skills.length+' مهارة | '+t.questions.length+' سؤال'+(t.savedAt?' | '+new Date(t.savedAt).toLocaleDateString('ar-SA'):'')+'</div>'
+        +'</div>'
+        +'<button class="btn btn-sm btn-mint" onclick="loadExamTemplate('+i+')">📥 تحميل</button>'
+        +'<button class="btn btn-xs btn-rose" onclick="deleteExamTemplate('+i+')">🗑️</button>'
+        +'</div>';
+    }).join('');
+  }
+  document.getElementById('examLibraryModal').classList.add('open');
+}
+
+function loadExamTemplate(i){
+  var templates=[];
+  try{templates=JSON.parse(localStorage.getItem('baseeraTemplates')||'[]');}catch(e){}
+  var t=templates[i];if(!t)return;
+  S.skills=t.skills.slice();
+  S.questions=t.questions.map(function(q){return Object.assign({},q);});
+  qCount=S.questions.length;
+  renderQs();renderSkills();
+  document.getElementById('cardQuestions').style.display='block';
+  document.getElementById('examLibraryModal').classList.remove('open');
+  toast('✅ تم تحميل قالب "'+t.label+'"','s',3000);
+  setTimeout(function(){document.getElementById('cardQuestions').scrollIntoView({behavior:'smooth',block:'start'});},400);
+}
+
+function deleteExamTemplate(i){
+  if(!confirm('حذف هذا القالب؟'))return;
+  var templates=[];
+  try{templates=JSON.parse(localStorage.getItem('baseeraTemplates')||'[]');}catch(e){}
+  templates.splice(i,1);
+  try{localStorage.setItem('baseeraTemplates',JSON.stringify(templates));}catch(e){}
+  openExamLibrary();
+}
+
+/* ════════════════════════════════════════
+   COPY TO MULTIPLE CLASSES
+════════════════════════════════════════ */
+var copyClsRows=[];
+
+function openCopyToClassesModal(){
+  if(!S.questions.length){toast('أضف أسئلة أولاً','w');return;}
+  copyClsRows=[];
+  renderCopyClsList();
+  document.getElementById('copyClsModal').classList.add('open');
+}
+
+function renderCopyClsList(){
+  var el=document.getElementById('copyClsList');
+  if(!copyClsRows.length){
+    el.innerHTML='<span style="font-size:12px;color:#6b9980">أضف أسماء الصفوف أدناه</span>';return;
+  }
+  el.innerHTML=copyClsRows.map(function(row,i){
+    return'<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:#f7fdf9;border:1px solid #d4f0e4;border-radius:9px">'
+      +'<span style="flex:1;font-size:13px;font-weight:600;color:#1a2e22">'+row.name+'</span>'
+      +'<textarea style="flex:2;min-height:40px;padding:5px 9px;border:1.5px solid #c8e8d8;border-radius:8px;font-family:inherit;font-size:11px;resize:vertical" placeholder="أسماء الطلاب (كل اسم في سطر)" onchange="copyClsRows['+i+'].students=this.value"></textarea>'
+      +'<button class="btn btn-xs btn-rose" onclick="copyClsRows.splice('+i+',1);renderCopyClsList()">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+function addCopyClsRow(){
+  var inp=document.getElementById('newCopyClsName');
+  var val=inp.value.trim();
+  if(!val){toast('أدخل اسم الصف','w');return;}
+  copyClsRows.push({name:val,students:''});
+  inp.value='';
+  renderCopyClsList();
+}
+
+function applyCopyClasses(){
+  if(!copyClsRows.length){toast('أضف صفاً واحداً على الأقل','w');return;}
+  var added=0;
+  copyClsRows.forEach(function(row){
+    if(!row.name)return;
+    var sts=(row.students||'').split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});
+    if(!sts.length)sts=['طالب 1','طالب 2'];
+    S.classes[row.name]={students:sts.map(function(s){return{name:s,grades:{}};})};
+    if(!S.activeClass)S.activeClass=row.name;
+    added++;
+  });
+  document.getElementById('copyClsModal').classList.remove('open');
+  renderClsSummary();
+  toast('✅ تم إنشاء '+added+' صفوف بنفس هيكل الامتحان','s',3500);
+}
+
+/* ════════════════════════════════════════
+   INTERVENTION PROMPT
+════════════════════════════════════════ */
+function openInterventionPrompt(){
+  var ks=Object.keys(S.classes);
+  if(!ks.length||!S.questions.length){toast('أدخل البيانات والعلامات أولاً','w');return;}
+  var teacher=gv('teacherName')||'المعلم';
+  var subject=gv('subject')||'المادة';
+  var semester=gv('semester')||'';
+  var year=gv('year')||'';
+  var tM=S.questions.reduce(function(a,q){return a+q.maxMark;},0);
+  /* Collect all students data */
+  var allLines=[];
+  ks.forEach(function(k){
+    var cls=S.classes[k];
+    cls.students.forEach(function(st){
+      var tot=getTotal(st,S.questions);
+      var pct=tM?Math.round(tot/tM*100):0;
+      var weakSkills=S.skills.filter(function(sk,si){
+        var p=skillPct([st],S.questions,si);
+        return p!==null&&p<60;
+      });
+      allLines.push('• '+st.name+' ('+k+'): '+pct+'%'+(weakSkills.length?' — مهارات ضعيفة: '+weakSkills.join(', '):''));
+    });
+  });
+  /* Skill summary */
+  var skillSummary=S.skills.map(function(sk,si){
+    var allSts=[];
+    ks.forEach(function(k){allSts=allSts.concat(S.classes[k].students);});
+    var p=skillPct(allSts,S.questions,si);
+    return sk+': '+(p!==null?p+'%':'—');
+  }).join('\n');
+  var prompt='أنت خبير تربوي متخصص في التدخل التعليمي. بناءً على بيانات امتحان '+subject+' للمعلم '+teacher+' ('+semester+' '+year+')، اقترح خطة تدخل تعليمية شاملة:\n\n'
+    +'═══ ملخص الأداء العام ═══\n'
+    +skillSummary+'\n\n'
+    +'═══ أداء الطلاب (عينة) ═══\n'
+    +allLines.slice(0,20).join('\n')+'\n\n'
+    +'المطلوب:\n'
+    +'١. تحديد المهارات الأكثر ضعفاً وأسبابها المحتملة\n'
+    +'٢. خطة تدخل لكل مستوى (ضعيف / متوسط / متميز)\n'
+    +'٣. أنشطة وأساليب تدريس مقترحة لكل مهارة ضعيفة\n'
+    +'٤. أدوات تقييم مستمر مقترحة\n'
+    +'٥. رسالة تشجيعية للطلاب الضعفاء';
+  document.getElementById('interventionPromptBox').textContent=prompt;
+  document.getElementById('interventionModal').classList.add('open');
+}
+
+function copyInterventionPrompt(){
+  var box=document.getElementById('interventionPromptBox');
+  navigator.clipboard.writeText(box.textContent).then(function(){
+    toast('✅ تم نسخ برومبت خطة التدخل','s',3000);
+  }).catch(function(){
+    var ta=document.createElement('textarea');ta.value=box.textContent;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    toast('✅ تم النسخ','s',2000);
+  });
+}
+
+/* ════════════════════════════════════════
+   UPDATED PROMPT GENERATOR (with unit/grade)
+════════════════════════════════════════ */
 </script>
 </body>
 </html>
